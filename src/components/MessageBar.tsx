@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Panel, Jumbotron, FormGroup, ControlLabel, FormControl, FormControlProps, HelpBlock } from "react-bootstrap";
+import { Card } from "react-bootstrap";
+import { Well } from "./Well";
 
 interface MessageBarProps {
   message?: string;
@@ -9,10 +10,10 @@ interface MessageBarProps {
 const MessageBar = ( props: MessageBarProps ) => {
   if (props.message || (props.errors && props.errors.length)) {
     return (
-      <Panel>
+      <Well>
         { props.message ? <div><span style={ { color: "green" } }>{ props.message }</span></div> : <div/> }
         { props.errors.map(e => (<div key={ e }><span style={ { color: "red" } }>{ e }</span><br /></div>)) }
-      </Panel>
+      </Well>
     );
   }
   else {

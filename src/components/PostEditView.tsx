@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Well, ButtonToolbar, ButtonGroup, Button } from "react-bootstrap";
+import { ButtonToolbar, ButtonGroup, Button } from "react-bootstrap";
 import DbPost from "../model/DbPost";
 import IBaseProps from "../domain/IBaseProps";
 import ReactMarkdown from "react-markdown";
@@ -123,11 +123,11 @@ class PostEditView extends React.PureComponent<IBaseProps, PostEditViewState> {
             <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <ButtonToolbar>
               <ButtonGroup>
-                <Button bsStyle="default" onClick={ this.openHelp }>Help</Button>
-                <Button bsStyle="default" onClick={ this.save }>Save</Button>
+                <Button variant="primary" onClick={ this.openHelp }>Help</Button>
+                <Button variant="primary" onClick={ this.save }>Save</Button>
               </ButtonGroup>
               <ButtonGroup>
-                <Button bsStyle="danger" onClick={ this.delete }>Delete</Button>
+                <Button variant="danger" onClick={ this.delete }>Delete</Button>
               </ButtonGroup>
             </ButtonToolbar>
               <textarea className="col-xs-6" style={ { "height": "100vh" } } value={ this.state.post.content } onChange={ this.markdownChanged } />

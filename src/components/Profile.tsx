@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Well, Button, Jumbotron, FormGroup, ControlLabel, FormControl, HelpBlock, Checkbox } from "react-bootstrap";
+import { Card, Button, Form } from "react-bootstrap";
 import FieldGroup from "./FieldGroup";
 import DbUser from "../model/DbUser";
 import UserDetail from "../model/UserDetail";
@@ -7,6 +7,7 @@ import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 import IBaseProps from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
+import { Well } from "./Well";
 
 interface ProfileState {
     userName: string;
@@ -152,45 +153,43 @@ class Profile extends React.PureComponent<IBaseProps, ProfileState> {
         return (
           <Well>
             <MessageBar message= { this.state.message } errors={ this.state.errors } />
-            <Jumbotron>
-              <h1>Profile</h1>
-                <form action="javascript: void(0);">
-                  <FieldGroup
-                    id="firstNameText"
-                    control={ { type: "text", value: this.state.firstName, placeholder: "Enter first name", onChange: this.setFirstName } }
-                    label="First Name"
-                  />
-                  <FieldGroup
-                    id="lastNameText"
-                    control={ { type: "text", value: this.state.lastName, placeholder: "Enter last name", onChange: this.setLastName } }
-                    label="Last Name"
-                  />
-                  <FieldGroup
-                    id="userNameText"
-                    control={ { type: "text", value: this.state.userName, placeholder: "Enter username", onChange: this.setUsername } }
-                    label="Username"
-                  />
-                  <FieldGroup
-                    id="formControlsEmail"
-                    control={ { type: "text", value: this.state.email, placeholder: "Enter email", onChange: this.setEmail } }
-                    label="E-Mail"
-                  />
-                  <FieldGroup
-                    id="formControlsPassword"
-                    control={ { type: "password", value: this.state.password, placeholder: "Leave empty for not updating", onChange: this.setPassword } }
-                    label="Password"
-                  />
-                  <FieldGroup
-                    id="formControlsRepeatPassword"
-                    control={ { type: "password", value: this.state.repeatPassword, placeholder: "Leave empty for not updating", onChange: this.repeatPassword } }
-                    label="Repeat Password"
-                  />
-                  { this.props.user && this.props.user.is_admin && <Checkbox key={ `${ this.state.userName }_isAdmin` } checked={ this.state.isAdmin } onChange={ this.setIsAdmin }>Is Admin</Checkbox> }
-                  <Button onClick={ this.update } type="submit">
-                    Submit
-                  </Button>
-                </form>
-            </Jumbotron>
+            <h1>Profile</h1>
+            <Form>
+              <FieldGroup
+                id="firstNameText"
+                control={ { type: "text", value: this.state.firstName, placeholder: "Enter first name", onChange: this.setFirstName } }
+                label="First Name"
+              />
+              <FieldGroup
+                id="lastNameText"
+                control={ { type: "text", value: this.state.lastName, placeholder: "Enter last name", onChange: this.setLastName } }
+                label="Last Name"
+              />
+              <FieldGroup
+                id="userNameText"
+                control={ { type: "text", value: this.state.userName, placeholder: "Enter username", onChange: this.setUsername } }
+                label="Username"
+              />
+              <FieldGroup
+                id="formControlsEmail"
+                control={ { type: "text", value: this.state.email, placeholder: "Enter email", onChange: this.setEmail } }
+                label="E-Mail"
+              />
+              <FieldGroup
+                id="formControlsPassword"
+                control={ { type: "password", value: this.state.password, placeholder: "Leave empty for not updating", onChange: this.setPassword } }
+                label="Password"
+              />
+              <FieldGroup
+                id="formControlsRepeatPassword"
+                control={ { type: "password", value: this.state.repeatPassword, placeholder: "Leave empty for not updating", onChange: this.repeatPassword } }
+                label="Repeat Password"
+              />
+              { this.props.user && this.props.user.is_admin && <Form.Check key={ `${ this.state.userName }_isAdmin` } checked={ this.state.isAdmin } onChange={ this.setIsAdmin }>Is Admin</Form.Check> }
+              <Button onClick={ this.update } type="submit">
+                Submit
+              </Button>
+            </Form>
           </Well>
         );
     }

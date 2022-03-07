@@ -1,11 +1,12 @@
 import * as React from "react";
-import { Well, Button, Jumbotron, FormGroup, ControlLabel, FormControl, HelpBlock } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import FieldGroup from "./FieldGroup";
 import UserDetail from "../model/UserDetail";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 import IBaseProps from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
+import { Well } from "./Well";
 
 export interface LoginProps extends IBaseProps {
     redirectComponent?: string;
@@ -77,22 +78,20 @@ class Login extends React.PureComponent<LoginProps, LoginState> {
         return (
           <Well>
             <MessageBar errors={ this.state.errors } />
-            <Jumbotron>
-              <h1>Login</h1>
-                <FieldGroup
-                  id="userNameText"
-                  control={ { type: "text", placeholder: "Enter username", onChange: this.setUsername } }
-                  label="Username"
-                />
-                <FieldGroup
-                  id="foEditorrmControlsPassword"
-                  control={ { type: "password", placeholder: "Enter password", onChange: this.setPassword } }
-                  label="Password"
-                />
-                <Button onClick={ this.login } type="submit">
-                  Submit
-                </Button>
-            </Jumbotron>
+            <h1>Login</h1>
+            <FieldGroup
+              id="userNameText"
+              control={ { type: "text", placeholder: "Enter username", onChange: this.setUsername } }
+              label="Username"
+            />
+            <FieldGroup
+              id="foEditorrmControlsPassword"
+              control={ { type: "password", placeholder: "Enter password", onChange: this.setPassword } }
+              label="Password"
+            />
+            <Button onClick={ this.login } type="submit">
+              Submit
+            </Button>
           </Well>
         );
     }

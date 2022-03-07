@@ -1,9 +1,10 @@
 import * as React from "react";
-import { Well, Jumbotron } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 import IBaseProps from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
+import { Well } from "./Well";
 
 export interface LogoutState {
   errors: Array<string>;
@@ -48,7 +49,7 @@ class Logout extends React.PureComponent<IBaseProps, LogoutState> {
     render() {
         return (
             <Well>
-            <MessageBar errors={ this.state.errors } />
+              <MessageBar errors={ this.state.errors } />
             </Well>
         );
     }

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Well, Jumbotron, FormGroup, ControlLabel, FormControl, FormControlProps, HelpBlock } from "react-bootstrap";
+import { FormGroup, Form, FormControlProps } from "react-bootstrap";
 
 interface FieldGroupProps {
   id: string;
@@ -9,11 +9,11 @@ interface FieldGroupProps {
 }
 
 const FieldGroup = ( props: FieldGroupProps ) => (
-    <FormGroup controlId={ props.id }>
-      <ControlLabel>{ props.label }</ControlLabel>
-      <FormControl { ...props.control } />
-      { props.help && <HelpBlock>{ props.help }</HelpBlock> }
-    </FormGroup>
+    <Form.Group controlId={ props.id }>
+      <Form.Label>{ props.label }</Form.Label>
+      <Form.Control { ...props.control } />
+      { props.help && <Form.Text>{ props.help }</Form.Text> }
+    </Form.Group>
 );
 
 export default FieldGroup;

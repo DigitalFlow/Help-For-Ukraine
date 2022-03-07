@@ -1,14 +1,15 @@
 import * as React from "react";
-import { Panel } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import DbPost from "../model/DbPost";
 import ReactMarkdown from "react-markdown";
+import { Well } from "./Well";
 
 export interface PostViewProps {
   post: DbPost;
 }
 
 const PostView = ( props: PostViewProps ) => (
-  <Panel>
+  <Well>
     <p style={ { "textAlign": "right" } }>{ props.post.created_on }</p>
 
     <ReactMarkdown
@@ -17,7 +18,7 @@ const PostView = ( props: PostViewProps ) => (
       children={ props.post.content }
       skipHtml={ true }
     />
-  </Panel>
+  </Well>
 );
 
 export default PostView;

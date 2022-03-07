@@ -1,7 +1,7 @@
 import * as React from "react";
 import DbUser from "../model/DbUser";
 import { LinkContainer } from "react-router-bootstrap";
-import { Tab, Row, Col, NavItem, Nav, Table, Jumbotron, Well } from "react-bootstrap";
+import { Tab, Row, Col, NavItem, Nav, Table } from "react-bootstrap";
 import IBaseProps from "../domain/IBaseProps";
 
 export interface PostListViewState {
@@ -40,7 +40,7 @@ export default class UserListView extends React.PureComponent<IBaseProps, PostLi
 
   render () {
     return (
-      <Table striped bordered condensed hover>
+      <Table striped bordered hover>
         <thead>
             <tr>
                 <th>Username</th>

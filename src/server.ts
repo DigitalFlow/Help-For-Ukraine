@@ -91,6 +91,7 @@ process.on("SIGINT", function() {
  */
 const app = express();
 
+app.enable("trust proxy");
 app.use(helmet());
 app.use(cookieParser());
 app.use(Authentication);
@@ -104,6 +105,14 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use((request, response, next) => {
+  if (process.env.NODE_ENV !== "development" && !request.secure) {
+    return response.redirect(`https://${request.headers.host}${request.url}`);
+  }
+
+  next();
+});
 
 app.use(express.static(path.resolve(__dirname, "..", "dist")));
 

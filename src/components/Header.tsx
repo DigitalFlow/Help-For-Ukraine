@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Well, Navbar, Nav, NavItem, MenuItem, NavDropdown, Jumbotron } from "react-bootstrap";
-import { LinkContainer, IndexLinkContainer } from "react-router-bootstrap";
+import { Navbar, Nav, NavItem, Container } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 import { IBaseProps } from "../domain/IBaseProps";
 
 export default class Header extends React.PureComponent<IBaseProps, undefined> {
@@ -10,56 +10,56 @@ export default class Header extends React.PureComponent<IBaseProps, undefined> {
 
   render() {
       return (
-        <Navbar inverse collapseOnSelect>
-          <Navbar.Header>
-          <LinkContainer to="/index">
-            <Navbar.Brand>
+        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+          <Container fluid>
+            <LinkContainer to="/index">
+              <Navbar.Brand>
                 <div style={{ display: "flex", flexDirection: "row" }}>
-                  <div style={{ marginRight: "5px", background: "linear-gradient(to bottom, #0057b7 0%, #0057b7 50%, #ffd700 50%, #ffd700 100%)", width: "30px", height: "20px" }} />
-                  <span>Help for Ukraine</span>
+                    <div style={{ margin: "5px", background: "linear-gradient(to bottom, #0057b7 0%, #0057b7 50%, #ffd700 50%, #ffd700 100%)", width: "30px", height: "20px" }} />
+                    <span>Help for Ukraine</span>
                 </div>
-            </Navbar.Brand>
-          </LinkContainer>
-          <Navbar.Toggle />
-          </Navbar.Header>
-          <Navbar.Collapse>
-          <Nav>
-              { this.props.user &&
-                <IndexLinkContainer to="/housing">
-                  <NavItem>Housing</NavItem>
-                </IndexLinkContainer>
-              }
-              { this.props.user &&
-                <IndexLinkContainer to="/help">
-                  <NavItem>Help</NavItem>
-                </IndexLinkContainer>
-              }
-              { this.props.user &&
-                <IndexLinkContainer to="/familyFinder">
-                  <NavItem>Family Finder</NavItem>
-                </IndexLinkContainer>
-              }
-              { this.props.user && this.props.user.is_admin &&
-                <IndexLinkContainer to="/portalManagement">
-                  <NavItem>Portal Management</NavItem>
-                </IndexLinkContainer>
-              }
-          </Nav>
-          <Nav pullRight>
-            { !this.props.user && <IndexLinkContainer to="/login">
-              <NavItem>Login</NavItem>
-            </IndexLinkContainer> }
-            { !this.props.user && <IndexLinkContainer to="/signUp">
-              <NavItem>Sign Up</NavItem>
-            </IndexLinkContainer> }
-            { this.props.user && <IndexLinkContainer to="/profile">
-              <NavItem>Profile</NavItem>
-            </IndexLinkContainer> }
-            { this.props.user && <IndexLinkContainer to="/logout">
-              <NavItem>Logout</NavItem>
-            </IndexLinkContainer> }
-          </Nav>
-          </Navbar.Collapse>
+              </Navbar.Brand>
+            </LinkContainer>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav>
+                { this.props.user &&
+                  <LinkContainer to="/housing">
+                    <NavItem>Housing</NavItem>
+                  </LinkContainer>
+                }
+                { this.props.user &&
+                  <LinkContainer to="/help">
+                    <NavItem>Help</NavItem>
+                  </LinkContainer>
+                }
+                { this.props.user &&
+                  <LinkContainer to="/familyFinder">
+                    <NavItem>Family Finder</NavItem>
+                  </LinkContainer>
+                }
+                { this.props.user && this.props.user.is_admin &&
+                  <LinkContainer to="/portalManagement">
+                    <NavItem>Portal Management</NavItem>
+                  </LinkContainer>
+                }
+            </Nav>
+            <Nav className="justify-content-end">
+              { !this.props.user && <LinkContainer to="/login">
+                <NavItem>Login</NavItem>
+              </LinkContainer> }
+              { !this.props.user && <LinkContainer to="/signUp">
+                <NavItem>Sign Up</NavItem>
+              </LinkContainer> }
+              { this.props.user && <LinkContainer to="/profile">
+                <NavItem>Profile</NavItem>
+              </LinkContainer> }
+              { this.props.user && <LinkContainer to="/logout">
+                <NavItem>Logout</NavItem>
+              </LinkContainer> }
+            </Nav>
+            </Navbar.Collapse>
+          </Container>
         </Navbar>
       );
   }

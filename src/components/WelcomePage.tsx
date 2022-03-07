@@ -1,9 +1,10 @@
 import * as React from "react";
-import { Well, Jumbotron, Panel } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import IBaseProps from "../domain/IBaseProps";
 import DbPost from "../model/DbPost";
 import PostView from "./PostView";
 import { withRouter } from "react-router-dom";
+import { Well } from "./Well";
 
 interface WelcomePageState {
   posts: Array<DbPost>;
@@ -35,22 +36,22 @@ class WelcomePage extends React.PureComponent<IBaseProps, WelcomePageState> {
 
   render() {
     return (
-      <div>
-        <div className="col-xs-6">
-          <Well>
-            <Jumbotron>
+      <Container fluid>
+        <Row>
+          <Col xs={6}>
+            <Well>
               <h1>Welcome { this.props.user && this.props.user.first_name }</h1>
               <p>Find missing family members, housing or help</p>
-            </Jumbotron>
-          </Well>
-        </div>
-        <div className="col-xs-6">
-          <Well>
-            <h1>News</h1>
-            { this.props.user ? this.state.posts.map(p => <PostView key={ p.id } post={ p } />) : "" }
-          </Well>
-        </div>
-    </div>
+            </Well>
+          </Col>
+          <Col xs={6}>
+            <Well>
+              <h1>News</h1>
+              { this.props.user ? this.state.posts.map(p => <PostView key={ p.id } post={ p } />) : "" }
+            </Well>
+          </Col>
+        </Row>
+    </Container>
     );
   }
 }
