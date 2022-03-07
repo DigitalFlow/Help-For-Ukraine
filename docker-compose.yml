@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - db-data:/var/lib/postgresql/data/
-  oct:
+  web:
     image: digitalflow/help-for-ukraine:latest
     ports:
       - "8080:8080"

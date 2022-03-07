@@ -40,7 +40,7 @@ class WelcomePage extends React.PureComponent<IBaseProps, WelcomePageState> {
           <Well>
             <Jumbotron>
               <h1>Welcome { this.props.user && this.props.user.first_name }</h1>
-              <p>Study certifications, test yourself and take assessments!{ this.props.user ? "" : " Sign up or log in to get started" }</p>
+              <p>Find missing family members, housing or help</p>
             </Jumbotron>
           </Well>
         </div>

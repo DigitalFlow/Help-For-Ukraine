@@ -14,7 +14,10 @@ export default class Header extends React.PureComponent<IBaseProps, undefined> {
           <Navbar.Header>
           <LinkContainer to="/index">
             <Navbar.Brand>
-                Help for Ukraine
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{ marginRight: "5px", background: "linear-gradient(to bottom, #0057b7 0%, #0057b7 50%, #ffd700 50%, #ffd700 100%)", width: "30px", height: "20px" }} />
+                  <span>Help for Ukraine</span>
+                </div>
             </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle />

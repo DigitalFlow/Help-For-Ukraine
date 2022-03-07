@@ -34,7 +34,7 @@ export default class Main extends React.PureComponent<IBaseProps, undefined> {
           <Route exact path="/logout">
             <Logout {...this.props} />
           </Route>
-          <Route exact path="/profile/:userId?">
+          <Route exact path="/profile">
             <Profile {...this.props} />
           </Route>
           <Route exact path="/signUp">

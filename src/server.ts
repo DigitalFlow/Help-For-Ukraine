@@ -28,7 +28,7 @@ import { IsAuthenticated, IsAdmin } from "./domain/AuthRestrictions.js";
 // Connect to MySQL
 import { pool, sequelize, User } from "./domain/DbConnection.js";
 
-console.log("Authenticating sequelize 05:50");
+console.log("Authenticating sequelize");
 
 sequelize.authenticate({ logging: true })
   .then(() => {
@@ -127,30 +127,8 @@ app.delete("/posts/:postId", IsAdmin, postController.deletePost);
 // Always return the main index.html, so react-router renders the route in the client
 app.get("*", homeController.getAll);
 
-const PORT = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
+const server = http.createServer(app);
 
-let appHost = app;
-const host = process.env.CERT_TRAINER_VHOST || "localhost";
-
-if (process.env.CERT_TRAINER_VHOST) {
-  appHost = express();
-  appHost.use(vhost(process.env.CERT_TRAINER_VHOST, app)); // Serves top level domain via Main server app
-}
-
-let server;
-
-if (process.env.CERT_TRAINER_HTTPS) {
-  const options = {
-    cert: fs.readFileSync(process.env.CERT_TRAINER_CERT),
-    key: fs.readFileSync(process.env.CERT_TRAINER_KEY)
-  };
-
-  server = https.createServer(options, appHost).listen(PORT);
-}
-else {
-  server = http.createServer(appHost).listen(PORT);
-}
-
-console.log(`App listening on host ${ host } and port ${ PORT }!`);
-
-export default server;
+server.listen(port);
+console.log("Server running at http://localhost:%d", port);
