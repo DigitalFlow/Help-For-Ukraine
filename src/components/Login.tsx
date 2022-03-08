@@ -1,14 +1,14 @@
 import * as React from "react";
-import { Button, Card } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import FieldGroup from "./FieldGroup";
 import UserDetail from "../model/UserDetail";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
-import IBaseProps from "../domain/IBaseProps";
+import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
 
-export interface LoginProps extends IBaseProps {
+export interface LoginProps extends ExtendedIBaseProps {
     redirectComponent?: string;
 }
 
@@ -79,19 +79,21 @@ class Login extends React.PureComponent<LoginProps, LoginState> {
           <Well>
             <MessageBar errors={ this.state.errors } />
             <h1>Login</h1>
-            <FieldGroup
-              id="userNameText"
-              control={ { type: "text", placeholder: "Enter username", onChange: this.setUsername } }
-              label="Username"
-            />
-            <FieldGroup
-              id="foEditorrmControlsPassword"
-              control={ { type: "password", placeholder: "Enter password", onChange: this.setPassword } }
-              label="Password"
-            />
-            <Button onClick={ this.login } type="submit">
-              Submit
-            </Button>
+            <Form>
+              <FieldGroup
+                id="userNameText"
+                control={ { type: "text", placeholder: "Enter username", onChange: this.setUsername } }
+                label="Username"
+              />
+              <FieldGroup
+                id="foEditorrmControlsPassword"
+                control={ { type: "password", placeholder: "Enter password", onChange: this.setPassword } }
+                label="Password"
+              />
+              <Button onClick={ this.login } type="button">
+                Submit
+              </Button>
+            </Form>
           </Well>
         );
     }

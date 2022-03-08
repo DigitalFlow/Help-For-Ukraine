@@ -2,14 +2,15 @@ import * as React from "react";
 import DbPost from "../model/DbPost";
 import { Tab, Row, Col, NavItem, Nav, Table, ButtonToolbar, ButtonGroup, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import IBaseProps from "../domain/IBaseProps";
+import { ExtendedIBaseProps } from "../domain/IBaseProps";
+import { withRouter } from "react-router-dom";
 
-export interface PostListViewState {
+export interface PostListState {
   posts: Array<DbPost>;
 }
 
-export default class PostListView extends React.PureComponent<IBaseProps, PostListViewState> {
-  constructor (props: IBaseProps) {
+class PostList extends React.PureComponent<ExtendedIBaseProps, PostListState> {
+  constructor (props: ExtendedIBaseProps) {
     super(props);
 
     this.state = {
@@ -44,7 +45,7 @@ export default class PostListView extends React.PureComponent<IBaseProps, PostLi
         <ButtonToolbar>
           <ButtonGroup>
             <LinkContainer key={ "newLink" } to={ "/post/new" }>
-              <Button variant="default">New Post</Button>
+              <Button variant="primary">New Post</Button>
             </LinkContainer>
           </ButtonGroup>
         </ButtonToolbar>
@@ -85,3 +86,5 @@ export default class PostListView extends React.PureComponent<IBaseProps, PostLi
       );
   }
 }
+
+export default withRouter(PostList);

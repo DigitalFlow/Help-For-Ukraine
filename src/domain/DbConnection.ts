@@ -23,22 +23,24 @@ export const sequelize = new Sequelize(process.env.DB_DATABASE || "postgres",
                                     dialectOptions: {
                                         ssl: process.env.DB_SSL == "true"
                                     },
-                                    schema: "open_certification_trainer"
+                                    schema: "help_for_ukraine"
                                 });
 
 export const User = sequelize.define("user", {
   id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      primaryKey: true,
-      defaultValue: sequelize.literal("gen_random_uuid()")
+    type: DataTypes.UUID,
+    allowNull: false,
+    primaryKey: true,
+    defaultValue: sequelize.literal("gen_random_uuid()")
   },
   user_name: {
-      type: DataTypes.STRING,
-      allowNull: false
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false
   },
   email: {
     type: DataTypes.STRING,
+    unique: true,
     allowNull: false
   },
   is_admin: {
@@ -57,12 +59,87 @@ export const User = sequelize.define("user", {
     type: DataTypes.STRING,
     allowNull: true
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: sequelize.literal("NOW()")
-  },
-  updatedAt: {
+  created_on: {
     type: DataTypes.DATE,
     defaultValue: sequelize.literal("NOW()")
   }
-}, { freezeTableName: true });
+}, { freezeTableName: true, timestamps: false, underscored: true });
+
+export const Post = sequelize.define("post", {
+  id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    primaryKey: true,
+    defaultValue: sequelize.literal("gen_random_uuid()")
+  },
+  content: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  created_on: {
+    type: DataTypes.DATE,
+    defaultValue: sequelize.literal("NOW()")
+  }
+}, { freezeTableName: true, timestamps: false, underscored: true });
+
+export const person = sequelize.define("person", {
+  id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    primaryKey: true,
+    defaultValue: sequelize.literal("gen_random_uuid()")
+  },
+  first_name: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  last_name: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  city: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  question: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  created_on: {
+    type: DataTypes.DATE,
+    defaultValue: sequelize.literal("NOW()")
+  }
+}, { freezeTableName: true, timestamps: false, underscored: true });
+
+person.belongsTo(User, { onDelete: "CASCADE" });
+
+export const personSecret = sequelize.define("personsecret", {
+  id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    primaryKey: true,
+    defaultValue: sequelize.literal("gen_random_uuid()")
+  },
+  salt: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  iv: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  secret: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  created_on: {
+    type: DataTypes.DATE,
+    defaultValue: sequelize.literal("NOW()")
+  }
+}, { freezeTableName: true, timestamps: false, underscored: true });
+
+personSecret.belongsTo(person, { onDelete: "CASCADE" });

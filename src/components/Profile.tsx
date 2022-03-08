@@ -5,7 +5,7 @@ import DbUser from "../model/DbUser";
 import UserDetail from "../model/UserDetail";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
-import IBaseProps from "../domain/IBaseProps";
+import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
 
@@ -23,8 +23,8 @@ interface ProfileState {
 
 // 'HelloProps' describes the shape of props.
 // State is never set so we use the 'undefined' type.
-class Profile extends React.PureComponent<IBaseProps, ProfileState> {
-    constructor(props: IBaseProps) {
+class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
+    constructor(props: ExtendedIBaseProps) {
         super(props);
 
         this.state = {
@@ -154,7 +154,7 @@ class Profile extends React.PureComponent<IBaseProps, ProfileState> {
           <Well>
             <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <h1>Profile</h1>
-            <Form>
+            <div>
               <FieldGroup
                 id="firstNameText"
                 control={ { type: "text", value: this.state.firstName, placeholder: "Enter first name", onChange: this.setFirstName } }
@@ -189,7 +189,7 @@ class Profile extends React.PureComponent<IBaseProps, ProfileState> {
               <Button onClick={ this.update } type="submit">
                 Submit
               </Button>
-            </Form>
+            </div>
           </Well>
         );
     }

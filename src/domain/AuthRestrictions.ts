@@ -12,25 +12,25 @@ export function IsAuthenticated(req: Request, res: Response, next: Function) {
 
 export function IsAdmin(req: Request, res: Response, next: Function) {
   if (!req.user) {
-    return res.sendStatus(401);
+    return res.sendStatus(403);
   }
 
-  pool.query(`SELECT is_admin FROM open_certification_trainer.user WHERE id = '${ req.user }'`)
+  pool.query(`SELECT is_admin FROM help_for_ukraine.user WHERE id = '${ req.user }'`)
   .then(result => {
     if (result.rowCount < 1) {
-      return res.sendStatus(401);
+      return res.sendStatus(403);
     }
 
     const user = result.rows[0] as DbUser;
 
     if (!user.is_admin) {
-      return res.sendStatus(401);
+      return res.sendStatus(403);
     }
     else {
       return next();
     }
   })
   .catch(err => {
-    return res.sendStatus(401);
+    return res.sendStatus(403);
   });
 }

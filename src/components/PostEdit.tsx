@@ -1,20 +1,20 @@
 import * as React from "react";
-import { ButtonToolbar, ButtonGroup, Button } from "react-bootstrap";
+import { ButtonToolbar, ButtonGroup, Button, Row, Col, Container } from "react-bootstrap";
 import DbPost from "../model/DbPost";
-import IBaseProps from "../domain/IBaseProps";
+import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import ReactMarkdown from "react-markdown";
 import MessageBar from "./MessageBar";
 import * as uuid from "uuid";
 import { withRouter } from "react-router-dom";
 
-interface PostEditViewState {
+interface PostEditState {
   post: DbPost;
   message: string;
   errors: Array<string>;
 }
 
-class PostEditView extends React.PureComponent<IBaseProps, PostEditViewState> {
-    constructor(props: IBaseProps) {
+class PostEdit extends React.PureComponent<ExtendedIBaseProps, PostEditState> {
+    constructor(props: ExtendedIBaseProps) {
         super(props);
 
         this.state = {
@@ -35,7 +35,7 @@ class PostEditView extends React.PureComponent<IBaseProps, PostEditViewState> {
     }
 
     retrievePost() {
-      const postId = (this.props.match.params as any).postId;
+      const postId = (this.props.match.params as any).id;
 
       if (postId === "new") {
         return this.setState({
@@ -130,15 +130,23 @@ class PostEditView extends React.PureComponent<IBaseProps, PostEditViewState> {
                 <Button variant="danger" onClick={ this.delete }>Delete</Button>
               </ButtonGroup>
             </ButtonToolbar>
-              <textarea className="col-xs-6" style={ { "height": "100vh" } } value={ this.state.post.content } onChange={ this.markdownChanged } />
-              <ReactMarkdown
-                className="result col-xs-6"
-                children={ this.state.post.content }
-                skipHtml={ true }
-              />
+            <Container fluid>
+              <Row>
+                <Col xs={6}>
+                  <textarea style={ { "height": "100vh" } } value={ this.state.post.content } onChange={ this.markdownChanged } />
+                </Col>
+                <Col xs={6}>
+                  <ReactMarkdown
+                    className="result"
+                    children={ this.state.post.content }
+                    skipHtml={ true }
+                  />
+                </Col>
+              </Row>
+            </Container>
           </div>
         );
     }
 }
 
-export default withRouter(PostEditView);
+export default withRouter(PostEdit);

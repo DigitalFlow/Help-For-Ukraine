@@ -6,4 +6,4 @@ export interface IBaseProps {
   triggerUserReload?: () => void;
 }
 
-export default interface ExtendedIBaseProps extends IBaseProps, RouteComponentProps { }
+export interface ExtendedIBaseProps extends IBaseProps, RouteComponentProps { }

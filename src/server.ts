@@ -17,23 +17,24 @@ dotenv.config({ path: ".env.config" });
 const vhost = require("vhost");
 
 // Controllers
-import * as userController from "./controllers/UserController.js";
-import * as homeController from "./controllers/HomeController.js";
-import * as postController from "./controllers/PostController.js";
+import * as userController from "./controllers/UserController";
+import * as homeController from "./controllers/HomeController";
+import * as postController from "./controllers/PostController";
+import * as personController from "./controllers/PersonController";
 
 // Load authenticator
-import { Authentication } from "./domain/Authentication.js";
-import { IsAuthenticated, IsAdmin } from "./domain/AuthRestrictions.js";
+import { Authentication } from "./domain/Authentication";
+import { IsAuthenticated, IsAdmin } from "./domain/AuthRestrictions";
 
 // Connect to MySQL
-import { pool, sequelize, User } from "./domain/DbConnection.js";
+import { pool, sequelize, User } from "./domain/DbConnection";
 
 console.log("Authenticating sequelize");
 
 sequelize.authenticate({ logging: true })
   .then(() => {
     console.log("Creating scheme using sequelize");
-    return sequelize.createSchema("open_certification_trainer", { logging: true });
+    return sequelize.createSchema("help_for_ukraine", { logging: true });
   })
   .then(() => {
     console.log("Ensuring pgcrypto");
@@ -45,11 +46,11 @@ sequelize.authenticate({ logging: true })
   })
   .then(() => {
     console.log("Scheme synced");
-    return pool.query("set schema 'open_certification_trainer'");
+    return pool.query("set schema 'help_for_ukraine'");
   })
   .then(() => {
     console.log("Connected to database");
-    return pool.query("SELECT id from open_certification_trainer.user WHERE id = 'f39f13b4-b8c6-4013-ace6-087a45dbd23d'");
+    return pool.query("SELECT id from help_for_ukraine.user WHERE id = 'f39f13b4-b8c6-4013-ace6-087a45dbd23d'");
   })
   .then((result) => {
     if (result.rows.length) {
@@ -58,7 +59,7 @@ sequelize.authenticate({ logging: true })
     }
     else {
       console.log("Admin user is missing, creating it");
-      return pool.query("INSERT INTO open_certification_trainer.user (id, user_name, email, is_admin, password_hash, first_name, last_name) VALUES ('f39f13b4-b8c6-4013-ace6-087a45dbd23d', 'root', 'root@local.domain', true, '$2a$10$covQWp6GhzWOIik3T6oiveFVnIxTVG7X1c9ziHRM3jTiEFPT0cjd2', 'root', 'root')");
+      return pool.query("INSERT INTO help_for_ukraine.user (id, user_name, email, is_admin, password_hash, first_name, last_name) VALUES ('f39f13b4-b8c6-4013-ace6-087a45dbd23d', 'root', 'root@local.domain', true, '$2a$10$covQWp6GhzWOIik3T6oiveFVnIxTVG7X1c9ziHRM3jTiEFPT0cjd2', 'root', 'root')");
     }
   })
   .then((result) => {
@@ -121,17 +122,22 @@ app.use(express.static(path.resolve(__dirname, "..", "dist")));
  */
 app.post("/login", userController.postLogin);
 app.post("/logout", userController.postLogout);
-app.get("/retrieveProfile/:userId", IsAdmin, userController.getProfile);
+app.get("/retrieveProfile/:id", IsAdmin, userController.getProfile);
 app.get("/retrieveProfile", IsAuthenticated, userController.getProfile);
 app.get("/userList", IsAdmin, userController.getUserList);
-app.post("/profile/:userId", IsAdmin, userController.postProfile);
+app.post("/profile/:id", IsAdmin, userController.postProfile);
 app.post("/profile", IsAuthenticated, userController.postProfile);
 app.post("/signup", userController.postSignup);
 
 app.get("/posts", IsAuthenticated, postController.getPosts);
-app.get("/posts/:postId", IsAuthenticated, postController.getPost);
-app.post("/posts/:postId", IsAdmin, postController.upsertPost);
-app.delete("/posts/:postId", IsAdmin, postController.deletePost);
+app.get("/posts/:id", IsAuthenticated, postController.getPost);
+app.post("/posts/:id", IsAdmin, postController.upsertPost);
+app.delete("/posts/:id", IsAdmin, postController.deletePost);
+
+app.get("/persons", IsAuthenticated, personController.getPersons);
+app.get("/persons/:id", IsAuthenticated, personController.getPerson);
+app.post("/persons/:id", IsAuthenticated, personController.upsertPerson);
+app.delete("/persons/:id", IsAuthenticated, personController.deletePerson);
 
 // Always return the main index.html, so react-router renders the route in the client
 app.get("*", homeController.getAll);

@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Tab, Row, Col, NavItem, Nav, Table, Card } from "react-bootstrap";
-import IBaseProps from "../domain/IBaseProps";
+import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import DbUser from "../model/DbUser";
 import DbPost from "../model/DbPost";
-import UserListView from "./UserListView";
-import PostListView from "./PostListView";
+import UserList from "./UserList";
+import PostList from "./PostList";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
 
@@ -14,8 +14,8 @@ export class PortalManagementState {
   postInput: string;
 }
 
-class PortalManagement extends React.Component<IBaseProps, PortalManagementState> {
-    constructor(props: IBaseProps) {
+class PortalManagement extends React.Component<ExtendedIBaseProps, PortalManagementState> {
+    constructor(props: ExtendedIBaseProps) {
       super(props);
 
       this.state = {
@@ -43,10 +43,10 @@ class PortalManagement extends React.Component<IBaseProps, PortalManagementState
               <Well>
                 <Tab.Content>
                   <Tab.Pane eventKey="users">
-                    <UserListView {...this.props} />
+                    <UserList {...this.props} />
                   </Tab.Pane>
                   <Tab.Pane eventKey="posts">
-                    <PostListView {...this.props} />
+                    <PostList {...this.props} />
                   </Tab.Pane>
                 </Tab.Content>
               </Well>

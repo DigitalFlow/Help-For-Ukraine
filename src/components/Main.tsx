@@ -7,15 +7,13 @@ import Logout from "./Logout";
 import Profile from "./Profile";
 import SignUp from "./SignUp";
 import PortalManagement from "./PortalManagement";
-import PostEditView from "./PostEditView";
+import PostEdit from "./PostEdit";
+import PersonFinder from "./PersonList";
+import Person from "./Person";
 
 export default class Main extends React.PureComponent<IBaseProps, undefined> {
   constructor(props: IBaseProps) {
       super(props);
-  }
-
-  shouldComponentUpdate() {
-    return true;
   }
 
   render() {
@@ -28,13 +26,19 @@ export default class Main extends React.PureComponent<IBaseProps, undefined> {
           <Route exact path="/index">
             <WelcomePage {...this.props} />
           </Route>
+          <Route exact path="/person/:id">
+            <Person {...this.props} />
+          </Route>
+          <Route exact path="/personFinder">
+            <PersonFinder {...this.props} />
+          </Route>
           <Route exact path="/login">
             <Login {...this.props} />
           </Route>
           <Route exact path="/logout">
             <Logout {...this.props} />
           </Route>
-          <Route exact path="/profile">
+          <Route exact path="/profile/:id?">
             <Profile {...this.props} />
           </Route>
           <Route exact path="/signUp">
@@ -43,8 +47,8 @@ export default class Main extends React.PureComponent<IBaseProps, undefined> {
           <Route exact path="/portalManagement">
             <PortalManagement {...this.props} />
           </Route>
-          <Route exact path="/post/:postId">
-            <PostEditView {...this.props} />
+          <Route exact path="/post/:id">
+            <PostEdit {...this.props} />
           </Route>
         </Switch>
       </main>

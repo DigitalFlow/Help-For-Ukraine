@@ -2,7 +2,7 @@ import * as React from "react";
 import { Card } from "react-bootstrap";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
-import IBaseProps from "../domain/IBaseProps";
+import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
 
@@ -10,8 +10,8 @@ export interface LogoutState {
   errors: Array<string>;
 }
 
-class Logout extends React.PureComponent<IBaseProps, LogoutState> {
-    constructor(props: IBaseProps) {
+class Logout extends React.PureComponent<ExtendedIBaseProps, LogoutState> {
+    constructor(props: ExtendedIBaseProps) {
         super(props);
 
         this.state = {

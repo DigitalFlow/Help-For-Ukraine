@@ -9,7 +9,7 @@ interface FieldGroupProps {
 }
 
 const FieldGroup = ( props: FieldGroupProps ) => (
-    <Form.Group controlId={ props.id }>
+    <Form.Group style={{margin: "5px"}} controlId={ props.id }>
       <Form.Label>{ props.label }</Form.Label>
       <Form.Control { ...props.control } />
       { props.help && <Form.Text>{ props.help }</Form.Text> }

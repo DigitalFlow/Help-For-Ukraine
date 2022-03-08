@@ -5,10 +5,10 @@ import UserDetail from "../model/UserDetail";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
 import { withRouter } from "react-router-dom";
-import IBaseProps from "../domain/IBaseProps";
+import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { Well } from "./Well";
 
-export interface SignUpProps extends IBaseProps {
+export interface SignUpProps extends ExtendedIBaseProps {
     redirectComponent?: string;
 }
 
@@ -148,7 +148,7 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
                 control={ { type: "password", placeholder: "Repeat password", onChange: this.repeatPassword } }
                 label="Repeat Password"
               />
-              <Button onClick={ this.signUp } type="submit">
+              <Button onClick={ this.signUp } type="button">
                 Submit
               </Button>
             </Form>

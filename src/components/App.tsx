@@ -47,10 +47,6 @@ export default class App extends React.PureComponent<any, AppState> {
     });
   }
 
-  shouldComponentUpdate(nextProps: any) {
-    return true;
-  }
-
   triggerUserReload() {
     this.setUser();
   }

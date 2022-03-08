@@ -2,14 +2,15 @@ import * as React from "react";
 import DbUser from "../model/DbUser";
 import { LinkContainer } from "react-router-bootstrap";
 import { Tab, Row, Col, NavItem, Nav, Table } from "react-bootstrap";
-import IBaseProps from "../domain/IBaseProps";
+import { ExtendedIBaseProps } from "../domain/IBaseProps";
+import { withRouter } from "react-router-dom";
 
-export interface PostListViewState {
+export interface UserListState {
   users: Array<DbUser>;
 }
 
-export default class UserListView extends React.PureComponent<IBaseProps, PostListViewState> {
-  constructor (props: IBaseProps) {
+class UserList extends React.PureComponent<ExtendedIBaseProps, UserListState> {
+  constructor (props: ExtendedIBaseProps) {
     super(props);
 
     this.state = {
@@ -68,3 +69,5 @@ export default class UserListView extends React.PureComponent<IBaseProps, PostLi
       );
   }
 }
+
+export default withRouter(UserList);

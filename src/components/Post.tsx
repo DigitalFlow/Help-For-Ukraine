@@ -4,11 +4,11 @@ import DbPost from "../model/DbPost";
 import ReactMarkdown from "react-markdown";
 import { Well } from "./Well";
 
-export interface PostViewProps {
+export interface PostProps {
   post: DbPost;
 }
 
-const PostView = ( props: PostViewProps ) => (
+const Post = ( props: PostProps ) => (
   <Well>
     <p style={ { "textAlign": "right" } }>{ props.post.created_on }</p>
 
@@ -21,4 +21,4 @@ const PostView = ( props: PostViewProps ) => (
   </Well>
 );
 
-export default PostView;
+export default Post;
