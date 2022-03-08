@@ -12,7 +12,7 @@ services:
   web:
     image: digitalflow/help-for-ukraine:latest
     ports:
-      - "8080:8080"
+      - "80:80"
     depends_on:
       - postgres
     environment:
@@ -20,6 +20,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_DATABASE: postgres
+      PORT: 80
       NODE_ENV: development #Only use this in local dev
       JWT_SECRET: "j6ZNV/tJzgR9I8gIKa9h6g4J8ty4d3l7PkIXIutgQsUmb07jNJslb+4xcQU2eUVc/TI9+j0wZH+m+92h8aJScgb4mS1M48mZ3L2DqJ8gaBAnuYsK+EnMmrnXdZU27emLMBUM2j6heWgBirbUzvYDRoPdXkjaItEQV0MOayUksaMEymesAnXpMKMgR7pd5CEZTZ6ECNk4b416NoD2F9kmpsmcv6tYnA7yfA5lVOJWxHYP2stkhn2y/5Yi21svX4dkOudcejGMjugXusKXO7wyHwaIZy3R6wRxV5a/gSh7xkHE2dODM+aLc+d9oKNObcqoeXRdvqrzXAeWeJ98tlE99g=="  # Generate your own when hosting! node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
 volumes:

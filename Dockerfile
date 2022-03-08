@@ -3,6 +3,6 @@ WORKDIR /usr/src/app
 COPY . .
 
 RUN npm ci
-EXPOSE 8080
+EXPOSE 80
 
 CMD [ "npm", "start" ]

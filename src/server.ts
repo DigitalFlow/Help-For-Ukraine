@@ -101,7 +101,7 @@ app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:htt
 /**
  * Express configuration.
  */
-app.set("port", process.env.PORT || 3000);
+app.set("port", process.env.PORT || 80);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(bodyParser.json({ limit: "10mb" }));
