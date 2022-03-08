@@ -10,6 +10,7 @@ import PortalManagement from "./PortalManagement";
 import PostEdit from "./PostEdit";
 import PersonFinder from "./PersonList";
 import Person from "./Person";
+import Impressum from "./Impressum";
 
 export default class Main extends React.PureComponent<IBaseProps, undefined> {
   constructor(props: IBaseProps) {
@@ -43,6 +44,9 @@ export default class Main extends React.PureComponent<IBaseProps, undefined> {
           </Route>
           <Route exact path="/signUp">
             <SignUp {...this.props} />
+          </Route>
+          <Route exact path="/impressum">
+            <Impressum {...this.props} />
           </Route>
           <Route exact path="/portalManagement">
             <PortalManagement {...this.props} />

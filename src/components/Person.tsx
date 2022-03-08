@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ButtonToolbar, ButtonGroup, Button, Form } from "react-bootstrap";
-import DbPerson from "../model/DbPerson";
+import { DbPerson } from "../model/DbPerson";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import ReactMarkdown from "react-markdown";
 import MessageBar from "./MessageBar";
@@ -33,6 +33,8 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         this.setCity = this.setCity.bind(this);
         this.setDescription = this.setDescription.bind(this);
         this.setQuestion = this.setQuestion.bind(this);
+        this.setContactInformation = this.setContactInformation.bind(this);
+        this.setAnswer = this.setAnswer.bind(this);
     }
 
     componentDidMount() {
@@ -41,6 +43,14 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
 
     setFirstName(e: any) {
       this.setState({ person: { ...this.state.person, first_name: e.target.value }});
+    }
+
+    setAnswer(e: any) {
+      this.setState({ person: { ...this.state.person, secret_answer: e.target.value }});
+    }
+
+    setContactInformation(e: any) {
+      this.setState({ person: { ...this.state.person, contact_information: e.target.value }});
     }
 
     setLastName(e: any) {
@@ -171,9 +181,17 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
                 control={ { type: "text", value: this.state.person?.question ?? "", placeholder: "Enter question", onChange: this.setQuestion } }
                 label="Question"
               />
-              <Button onClick={ this.save } type="button">
-                Submit
-              </Button>
+              <FieldGroup
+                id="secretText"
+                control={ { type: "text", value: this.state.person?.secret_answer ?? "", placeholder: "Enter answer to question (secret)", onChange: this.setAnswer } }
+                label="Secret Answer"
+              />
+              <FieldGroup
+                id="contactInformationText"
+                control={ { type: "text", value: this.state.person?.question ?? "", placeholder: "Enter how you can be contacted", onChange: this.setContactInformation } }
+                label="Question"
+                help="This information is stored encrypted and can only be decrypted with the correct answer "
+              />
             </Form>
         </Well>
         );

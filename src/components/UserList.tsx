@@ -45,8 +45,6 @@ class UserList extends React.PureComponent<ExtendedIBaseProps, UserListState> {
         <thead>
             <tr>
                 <th>Username</th>
-                <th>First Name</th>
-                <th>Last Name</th>
                 <th>E-Mail</th>
                 <th>Is Admin</th>
             </tr>
@@ -57,8 +55,6 @@ class UserList extends React.PureComponent<ExtendedIBaseProps, UserListState> {
               <LinkContainer key={ `${ user.user_name }_link` } to={ `/profile/${ user.id }` }>
                 <tr>
                     <td>{ user.user_name }</td>
-                    <td>{ user.first_name }</td>
-                    <td>{ user.last_name }</td>
                     <td>{ user.email }</td>
                     <td>{ user.is_admin ? "True" : "False" }</td>
                 </tr>

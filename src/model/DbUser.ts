@@ -4,8 +4,6 @@ export interface DbUserProps {
   user_name: string;
   is_admin: boolean;
   id: string;
-  first_name: string;
-  last_name: string;
 }
 
 export default class DbUser {
@@ -14,8 +12,6 @@ export default class DbUser {
   user_name: string;
   is_admin: boolean;
   id: string;
-  first_name: string;
-  last_name: string;
 
   constructor (props: DbUserProps) {
     this.email = props.email;
@@ -23,7 +19,5 @@ export default class DbUser {
     this.user_name = props.user_name;
     this.is_admin = props.is_admin;
     this.id = props.id;
-    this.first_name = props.first_name;
-    this.last_name = props.last_name;
   }
 }

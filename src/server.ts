@@ -59,7 +59,7 @@ sequelize.authenticate({ logging: true })
     }
     else {
       console.log("Admin user is missing, creating it");
-      return pool.query("INSERT INTO help_for_ukraine.user (id, user_name, email, is_admin, password_hash, first_name, last_name) VALUES ('f39f13b4-b8c6-4013-ace6-087a45dbd23d', 'root', 'root@local.domain', true, '$2a$10$covQWp6GhzWOIik3T6oiveFVnIxTVG7X1c9ziHRM3jTiEFPT0cjd2', 'root', 'root')");
+      return pool.query("INSERT INTO help_for_ukraine.user (id, user_name, email, is_admin, password_hash) VALUES ('f39f13b4-b8c6-4013-ace6-087a45dbd23d', 'root', 'root@local.domain', true, '$2a$10$covQWp6GhzWOIik3T6oiveFVnIxTVG7X1c9ziHRM3jTiEFPT0cjd2')");
     }
   })
   .then((result) => {

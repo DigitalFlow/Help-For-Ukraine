@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import ValidationResult from "../model/ValidationResult.js";
 import { pool } from "../domain/DbConnection.js";
-import DbPerson from "../model/DbPerson.js";
+import { DbPerson } from "../model/DbPerson.js";
 
 export const getPersons = (req: Request, res: Response) => {
   const count = req.query.count;

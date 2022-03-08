@@ -101,8 +101,8 @@ export const postSignup = (req: Request, res: Response) => {
       }
 
       hashPassword(auth.password, (err: Error, hash: string) => {
-        pool.query("INSERT INTO help_for_ukraine.user (user_name, first_name, last_name, password_hash, email, is_admin) VALUES ($1, $2, $3, $4, $5, false)",
-          [auth.userName, auth.firstName, auth.lastName, hash, auth.email])
+        pool.query("INSERT INTO help_for_ukraine.user (user_name, password_hash, email, is_admin) VALUES ($1, $2, $3, false)",
+          [auth.userName, hash, auth.email])
           .then(() => {
             return res.status(200).json(new ValidationResult({ success: true }));
           })
@@ -183,7 +183,7 @@ export const postLogout = (req: Request, res: Response) => {
 export const getProfile = (req: Request, res: Response) => {
   const userId = req.params.id || req.user;
 
-  pool.query("SELECT user_name, first_name, last_name, email, is_admin FROM help_for_ukraine.user WHERE id = $1", [userId])
+  pool.query("SELECT user_name, email, is_admin FROM help_for_ukraine.user WHERE id = $1", [userId])
   .then(result => {
     if (result.rows.length < 1) {
       return res.status(200).json(new ValidationResult({ success: false, errors: [`User not found.`] }));
@@ -199,7 +199,7 @@ export const getProfile = (req: Request, res: Response) => {
 };
 
 export const getUserList = (req: Request, res: Response) => {
-  pool.query("SELECT id, user_name, first_name, last_name, email, is_admin FROM help_for_ukraine.user ORDER BY user_name")
+  pool.query("SELECT id, user_name, email, is_admin FROM help_for_ukraine.user ORDER BY user_name")
   .then(result => {
     const users = result.rows as Array<DbUser>;
 
@@ -238,8 +238,8 @@ export const postProfile = (req: Request, res: Response) => {
 
     if (auth.password) {
       hashPassword(auth.password, (err: Error, hash: string) => {
-        pool.query("UPDATE help_for_ukraine.user SET user_name=$1, first_name=$2, last_name=$3, password_hash=$4, email=$5, is_admin=$6 WHERE id = $7",
-          [auth.userName, auth.firstName, auth.lastName, hash, auth.email, auth.isAdmin, userId])
+        pool.query("UPDATE help_for_ukraine.user SET user_name=$1, password_hash=$2, email=$3, is_admin=$4 WHERE id = $5",
+          [auth.userName, hash, auth.email, auth.isAdmin, userId])
           .then(() => {
             return res.status(200).json(new ValidationResult({ success: true }));
           })
@@ -249,8 +249,8 @@ export const postProfile = (req: Request, res: Response) => {
       });
     }
     else {
-      pool.query("UPDATE help_for_ukraine.user SET user_name=$1, first_name=$2, last_name=$3, email=$4, is_admin=$5 WHERE id = $6",
-        [auth.userName, auth.firstName, auth.lastName, auth.email, auth.isAdmin, userId])
+      pool.query("UPDATE help_for_ukraine.user SET user_name=$1, email=$2, is_admin=$3 WHERE id = $4",
+        [auth.userName, auth.email, auth.isAdmin, userId])
         .then(() => {
           return res.status(200).json(new ValidationResult({ success: true }));
         })

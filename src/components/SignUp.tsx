@@ -14,8 +14,6 @@ export interface SignUpProps extends ExtendedIBaseProps {
 
 interface SignUpState {
     userName: string;
-    firstName: string;
-    lastName: string;
     password: string;
     repeatPassword: string;
     email: string;
@@ -31,8 +29,6 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
 
         this.state = {
             userName: "",
-            firstName: "",
-            lastName: "",
             password: "",
             repeatPassword: "",
             email: "",
@@ -41,8 +37,6 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
         };
 
         this.setUsername = this.setUsername.bind(this);
-        this.setFirstName = this.setFirstName.bind(this);
-        this.setLastName = this.setLastName.bind(this);
         this.setPassword = this.setPassword.bind(this);
         this.repeatPassword = this.repeatPassword.bind(this);
         this.setEmail = this.setEmail.bind(this);
@@ -51,14 +45,6 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
 
     setUsername(e: any) {
         this.setState({ userName: e.target.value });
-    }
-
-    setFirstName(e: any) {
-        this.setState({ firstName: e.target.value });
-    }
-
-    setLastName(e: any) {
-        this.setState({ lastName: e.target.value });
     }
 
     setPassword(e: any) {
@@ -87,8 +73,6 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
         headers: headers,
         body: JSON.stringify(new UserDetail({
           userName: this.state.userName,
-          firstName: this.state.firstName,
-          lastName: this.state.lastName,
           password: this.state.password,
           email: this.state.email
         })),
@@ -118,16 +102,6 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
             <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <Form>
               <h1>SignUp</h1>
-              <FieldGroup
-                id="firstNameText"
-                control={ { type: "text", placeholder: "Enter first name", onChange: this.setFirstName } }
-                label="First Name"
-              />
-              <FieldGroup
-                id="lastNameText"
-                control={ { type: "text", placeholder: "Enter last name", onChange: this.setLastName } }
-                label="Last Name"
-              />
               <FieldGroup
                 id="userNameText"
                 control={ { type: "text", placeholder: "Enter username", onChange: this.setUsername } }

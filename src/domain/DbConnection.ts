@@ -41,7 +41,7 @@ export const User = sequelize.define("user", {
   email: {
     type: DataTypes.STRING,
     unique: true,
-    allowNull: false
+    allowNull: true
   },
   is_admin: {
     type: DataTypes.BOOLEAN,
@@ -50,14 +50,6 @@ export const User = sequelize.define("user", {
   password_hash: {
     type: DataTypes.STRING,
     allowNull: false
-  },
-  first_name: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  last_name: {
-    type: DataTypes.STRING,
-    allowNull: true
   },
   created_on: {
     type: DataTypes.DATE,

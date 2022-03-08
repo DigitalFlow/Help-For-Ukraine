@@ -11,8 +11,6 @@ import { Well } from "./Well";
 
 interface ProfileState {
     userName: string;
-    firstName: string;
-    lastName: string;
     password: string;
     repeatPassword: string;
     email: string;
@@ -29,8 +27,6 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
 
         this.state = {
           userName: "",
-          firstName: "",
-          lastName: "",
           password: "",
           repeatPassword: "",
           email: "",
@@ -40,8 +36,6 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
         };
 
         this.setUsername = this.setUsername.bind(this);
-        this.setFirstName = this.setFirstName.bind(this);
-        this.setLastName = this.setLastName.bind(this);
         this.setPassword = this.setPassword.bind(this);
         this.repeatPassword = this.repeatPassword.bind(this);
         this.setEmail = this.setEmail.bind(this);
@@ -67,8 +61,6 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
       .then((user: DbUser) => {
           this.setState({
               userName: user.user_name,
-              firstName: user.first_name,
-              lastName: user.last_name,
               password: "",
               repeatPassword: "",
               email: user.email,
@@ -81,14 +73,6 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
 
     setUsername(e: any) {
         this.setState({ userName: e.target.value });
-    }
-
-    setFirstName(e: any) {
-        this.setState({ firstName: e.target.value });
-    }
-
-    setLastName(e: any) {
-        this.setState({ lastName: e.target.value });
     }
 
     setPassword(e: any) {
@@ -123,8 +107,6 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
         headers: headers,
         body: JSON.stringify(new UserDetail({
           userName: this.state.userName,
-          firstName: this.state.firstName,
-          lastName: this.state.lastName,
           password: this.state.password,
           email: this.state.email,
           isAdmin: this.state.isAdmin
@@ -155,16 +137,6 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
             <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <h1>Profile</h1>
             <div>
-              <FieldGroup
-                id="firstNameText"
-                control={ { type: "text", value: this.state.firstName, placeholder: "Enter first name", onChange: this.setFirstName } }
-                label="First Name"
-              />
-              <FieldGroup
-                id="lastNameText"
-                control={ { type: "text", value: this.state.lastName, placeholder: "Enter last name", onChange: this.setLastName } }
-                label="Last Name"
-              />
               <FieldGroup
                 id="userNameText"
                 control={ { type: "text", value: this.state.userName, placeholder: "Enter username", onChange: this.setUsername } }

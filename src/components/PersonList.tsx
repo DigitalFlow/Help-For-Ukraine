@@ -1,5 +1,5 @@
 import * as React from "react";
-import DbPerson from "../model/DbPerson";
+import { DbPerson } from "../model/DbPerson";
 import { Tab, Row, Col, NavItem, Nav, Table, ButtonToolbar, ButtonGroup, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";

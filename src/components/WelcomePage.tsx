@@ -40,7 +40,7 @@ class WelcomePage extends React.PureComponent<ExtendedIBaseProps, WelcomePageSta
         <Row>
           <Col xs={6}>
             <Well>
-              <h1>Welcome { this.props.user && this.props.user.first_name }</h1>
+              <h1>Welcome { this.props.user && this.props.user.user_name }</h1>
               <p>Find missing family members and soon even more.{ !this.props.user && " Please log in or sign up." }</p>
             </Well>
           </Col>
