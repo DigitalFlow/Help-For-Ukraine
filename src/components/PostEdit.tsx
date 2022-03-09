@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ButtonToolbar, ButtonGroup, Button, Row, Col, Container } from "react-bootstrap";
-import DbPost from "../model/DbPost";
+import  { DbPost  } from "../model/DbPost";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import ReactMarkdown from "react-markdown";
 import MessageBar from "./MessageBar";
@@ -79,7 +79,7 @@ class PostEdit extends React.PureComponent<ExtendedIBaseProps, PostEditState> {
       })
       .catch(err => {
         this.setState({
-          errors: [err]
+          errors: [err.message]
         });
       });
     }
@@ -104,7 +104,7 @@ class PostEdit extends React.PureComponent<ExtendedIBaseProps, PostEditState> {
       })
       .catch(err => {
         this.setState({
-          errors: [err]
+          errors: [err.message]
         });
       });
     }

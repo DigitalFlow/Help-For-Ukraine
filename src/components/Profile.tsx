@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Card, Button, Form } from "react-bootstrap";
 import FieldGroup from "./FieldGroup";
-import DbUser from "../model/DbUser";
+import { DbUser } from "../model/DbUser";
 import UserDetail from "../model/UserDetail";
 import ValidationResult from "../model/ValidationResult";
 import MessageBar from "./MessageBar";
@@ -128,6 +128,11 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
             errors: []
           });
         }
+      })
+      .catch((e) => {
+        this.setState({
+          errors: [e.message]
+        });
       });
     }
 

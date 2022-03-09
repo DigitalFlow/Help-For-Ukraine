@@ -1,12 +1,16 @@
 import * as React from "react";
-import DbUser from "../model/DbUser";
+import { DbUser } from "../model/DbUser";
 import { LinkContainer } from "react-router-bootstrap";
 import { Tab, Row, Col, NavItem, Nav, Table } from "react-bootstrap";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
+import { Well } from "./Well";
+import { Column } from "react-table";
+import { ReactTable } from "./ReactTable";
 
 export interface UserListState {
   users: Array<DbUser>;
+  columns: Array<Column<DbUser>>;
 }
 
 class UserList extends React.PureComponent<ExtendedIBaseProps, UserListState> {
@@ -14,7 +18,25 @@ class UserList extends React.PureComponent<ExtendedIBaseProps, UserListState> {
     super(props);
 
     this.state = {
-      users: []
+      users: [],
+      columns: [
+        {
+            Header: "Username",
+            accessor: "user_name"
+        },
+        {
+            Header: "E-Mail",
+            accessor: "email"
+        },
+        {
+            Header: "Is Admin",
+            accessor: "is_admin"
+        },
+        {
+            Header: "Created On",
+            accessor: "created_on"
+        }
+      ]
     };
 
     this.fetchUsers = this.fetchUsers.bind(this);
@@ -41,28 +63,10 @@ class UserList extends React.PureComponent<ExtendedIBaseProps, UserListState> {
 
   render () {
     return (
-      <Table striped bordered hover>
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>E-Mail</th>
-                <th>Is Admin</th>
-            </tr>
-        </thead>
-        <tbody>
-          {
-            this.state.users.map(user =>
-              <LinkContainer key={ `${ user.user_name }_link` } to={ `/profile/${ user.id }` }>
-                <tr>
-                    <td>{ user.user_name }</td>
-                    <td>{ user.email }</td>
-                    <td>{ user.is_admin ? "True" : "False" }</td>
-                </tr>
-              </LinkContainer>)
-          }
-        </tbody>
-        </Table>
-      );
+      <Well>
+        <ReactTable columns={this.state.columns} data={this.state.users} navigationPath="profile" />
+      </Well>
+    );
   }
 }
 

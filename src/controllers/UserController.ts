@@ -2,7 +2,7 @@ import * as bcrypt from "bcrypt";
 import validator from "validator";
 import * as jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { default as DbUser, DbUserProps } from "../model/DbUser.js";
+import { DbUser } from "../model/DbUser.js";
 import UserDetail from "../model/UserDetail.js";
 import UserInfo from "../model/UserInfo.js";
 import ValidationResult from "../model/ValidationResult.js";
@@ -127,7 +127,7 @@ export const postLogin = (req: Request, res: Response) => {
         return res.status(200).json(new ValidationResult({ success: false, errors: [`Authentication failed.`] }));
       }
 
-      const user = new DbUser(result.rows[0]);
+      const user = result.rows[0] as DbUser;
 
       return res.status(200).json(new ValidationResult({ success: true, userInfo: new UserInfo(user) }));
     })
@@ -142,7 +142,7 @@ export const postLogin = (req: Request, res: Response) => {
       return res.status(200).json(new ValidationResult({ success: false, errors: [`Authentication failed.`] }));
     }
 
-    const user = new DbUser(result.rows[0]);
+    const user = result.rows[0] as DbUser;
 
     bcrypt.compare(auth.password, user.password_hash, (err: Error, isMatch: boolean) => {
       if (err) {

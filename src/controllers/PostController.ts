@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { pool } from "../domain/DbConnection.js";
-import DbPost from "../model/DbPost.js";
+import  { DbPost  } from "../model/DbPost.js";
 
 export const getPosts = (req: Request, res: Response) => {
   const postCount = req.query.postCount;

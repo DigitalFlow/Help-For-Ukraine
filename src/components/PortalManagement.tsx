@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Tab, Row, Col, NavItem, Nav, Table, Card } from "react-bootstrap";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
-import DbUser from "../model/DbUser";
-import DbPost from "../model/DbPost";
+import { DbUser } from "../model/DbUser";
+import  { DbPost } from "../model/DbPost";
 import UserList from "./UserList";
 import PostList from "./PostList";
 import { withRouter } from "react-router-dom";

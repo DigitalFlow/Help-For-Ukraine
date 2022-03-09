@@ -13,6 +13,7 @@ interface PersonState {
   person: DbPerson;
   message: string;
   errors: Array<string>;
+  isNew: boolean;
 }
 
 class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
@@ -21,6 +22,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
 
         this.state = {
           person: undefined,
+          isNew: false,
           message: "",
           errors: []
         };
@@ -74,7 +76,8 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
 
       if (personId === "new") {
         return this.setState({
-          person: { ...this.state.person, id: uuid.v4() }
+          person: { ...this.state.person, id: uuid.v4() },
+          isNew: true
         });
       }
 
@@ -108,7 +111,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
       })
       .catch(err => {
         this.setState({
-          errors: [err]
+          errors: [err.message]
         });
       });
     }
@@ -128,12 +131,13 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
       .then(() => {
           this.setState({
               errors: [],
-              message: "Successfully saved person"
+              message: "Successfully saved person",
+              isNew: false
           });
       })
       .catch(err => {
         this.setState({
-          errors: [err]
+          errors: [err.message]
         });
       });
     }
@@ -150,9 +154,12 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
               <ButtonGroup>
                 <Button variant="primary" onClick={ this.save }>Save</Button>
               </ButtonGroup>
-              <ButtonGroup>
-                <Button variant="danger" onClick={ this.delete }>Delete</Button>
-              </ButtonGroup>
+              {
+                !this.state.isNew &&
+                <ButtonGroup>
+                  <Button variant="danger" onClick={ this.delete }>Delete</Button>
+                </ButtonGroup>
+              }
             </ButtonToolbar>
             <h1>Person</h1>
             <Form>
@@ -160,37 +167,43 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
                 id="firstNameText"
                 control={ { type: "text", value: this.state.person?.first_name ?? "", placeholder: "Enter first name", onChange: this.setFirstName } }
                 label="First Name"
+                help="Will be shown publicly"
               />
               <FieldGroup
                 id="lastNameText"
                 control={ { type: "text", value: this.state.person?.last_name ?? "", placeholder: "Enter last name", onChange: this.setLastName } }
                 label="Last Name"
+                help="Will be shown publicly"
               />
               <FieldGroup
                 id="cityText"
                 control={ { type: "text", value: this.state.person?.city ?? "", placeholder: "Enter city", onChange: this.setCity } }
                 label="City"
+                help="Not your current city, but your home city. Will be shown publicly."
               />
               <FieldGroup
                 id="descriptionText"
                 control={ { type: "text", value: this.state.person?.description ?? "", placeholder: "Enter description", onChange: this.setDescription } }
                 label="Description"
+                help="You can tell something about yourself so that your relatives can recognize you. Will be shown publicly, be careful."
               />
               <FieldGroup
                 id="questionText"
                 control={ { type: "text", value: this.state.person?.question ?? "", placeholder: "Enter question", onChange: this.setQuestion } }
                 label="Question"
+                help="Ask a question that only your family can answer. Do _NOT_ use anything easy to guess such as your eye / hair color or similar."
               />
               <FieldGroup
-                id="secretText"
+                id="answerText"
                 control={ { type: "text", value: this.state.person?.secret_answer ?? "", placeholder: "Enter answer to question (secret)", onChange: this.setAnswer } }
-                label="Secret Answer"
+                label="Question Answer"
+                help="Minimum length: 4 characters. Your family will have to give the same answer as you do to see your contact information, so choose something they will get right."
               />
               <FieldGroup
                 id="contactInformationText"
-                control={ { type: "text", value: this.state.person?.question ?? "", placeholder: "Enter how you can be contacted", onChange: this.setContactInformation } }
-                label="Question"
-                help="This information is stored encrypted and can only be decrypted with the correct answer "
+                control={ { type: "text", value: this.state.person?.contact_information ?? "", placeholder: "Leave a message for your relatives, how can you be contacted?", onChange: this.setContactInformation } }
+                label="Message for Family"
+                help="The message for your family can contain information on how to reach you. It is stored encrypted and can only be decrypted with the correct answer. Only you and people knowing the answer can view it."
               />
             </Form>
         </Well>

@@ -72,7 +72,7 @@ export const upsertPerson = async (req: Request, res: Response) => {
     const person = personQuery.rows[0] as DbPerson;
 
     if (person.user_id !== req.user) {
-      return res.status(200).json(new ValidationResult({ success: false, errors: [`Forbidden.`] }));
+      return res.status(403);
     }
   }
 

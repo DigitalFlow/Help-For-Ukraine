@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { pool } from "./DbConnection.js";
-import DbUser from "../model/DbUser.js";
+import { DbUser } from "../model/DbUser.js";
 
 export function IsAuthenticated(req: Request, res: Response, next: Function) {
     if (!req.user) {

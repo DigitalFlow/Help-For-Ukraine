@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
-import DbPost from "../model/DbPost";
+import  { DbPost  } from "../model/DbPost";
 import Post from "./Post";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";

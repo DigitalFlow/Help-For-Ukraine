@@ -5,9 +5,12 @@ import { LinkContainer } from "react-router-bootstrap";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
+import { ReactTable } from "./ReactTable";
+import { Column } from "react-table";
 
 export interface PersonFinderState {
   persons: Array<DbPerson>;
+  columns: Array<Column<DbPerson>>;
 }
 
 class PersonFinder extends React.PureComponent<ExtendedIBaseProps, PersonFinderState> {
@@ -15,7 +18,25 @@ class PersonFinder extends React.PureComponent<ExtendedIBaseProps, PersonFinderS
     super(props);
 
     this.state = {
-      persons: []
+      persons: [],
+      columns: [
+            {
+                Header: "First Name",
+                accessor: "first_name"
+            },
+            {
+                Header: "Last Name",
+                accessor: "last_name"
+            },
+            {
+                Header: "City",
+                accessor: "city"
+            },
+            {
+                Header: "Created On",
+                accessor: "created_on",
+            }
+      ]
     };
 
     this.fetchPersons = this.fetchPersons.bind(this);
@@ -46,38 +67,13 @@ class PersonFinder extends React.PureComponent<ExtendedIBaseProps, PersonFinderS
         <ButtonToolbar>
           <ButtonGroup>
             <LinkContainer key={ "newLink" } to={ "/person/new" }>
-              <Button variant="primary">New Person</Button>
+              <Button style={{margin: "5px" }} variant="primary">New Person</Button>
             </LinkContainer>
           </ButtonGroup>
         </ButtonToolbar>
-        <Table size="sm" striped bordered hover>
-          <thead>
-              <tr>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>City</th>
-                  <th>Created On</th>
-              </tr>
-          </thead>
-          <tbody>
-            {
-              this.state.persons.map(p => {
-                return (
-                  <LinkContainer key={ `${ p.id }_link` } to={ `/person/${ p.id }` }>
-                    <tr>
-                    <td>{ p.first_name }</td>
-                    <td>{ p.last_name }</td>
-                    <td>{ p.city }</td>
-                    <td>{ p.created_on }</td>
-                    </tr>
-                  </LinkContainer>
-                );
-              })
-            }
-          </tbody>
-          </Table>
-        </Well>
-      );
+        <ReactTable columns={this.state.columns} data={this.state.persons} navigationPath="person" />
+      </Well>
+    );
   }
 }
 

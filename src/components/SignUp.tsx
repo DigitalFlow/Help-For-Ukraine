@@ -93,6 +93,11 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
             errors: []
           });
         }
+      })
+      .catch((e) => {
+        this.setState({
+          errors: [e.message]
+        });
       });
     }
 
