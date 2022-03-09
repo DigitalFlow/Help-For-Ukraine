@@ -7,10 +7,11 @@ import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
 import { Column } from "react-table";
 import { ReactTable } from "./ReactTable";
+import UserInfo from "../model/UserInfo";
 
 export interface UserListState {
-  users: Array<DbUser>;
-  columns: Array<Column<DbUser>>;
+  users: Array<UserInfo>;
+  columns: Array<Column<UserInfo>>;
 }
 
 class UserList extends React.PureComponent<ExtendedIBaseProps, UserListState> {
@@ -50,7 +51,7 @@ class UserList extends React.PureComponent<ExtendedIBaseProps, UserListState> {
     .then(results => {
       return results.json();
     })
-    .then((users: Array<DbUser>) => {
+    .then((users: Array<UserInfo>) => {
         this.setState({
             users: users
         });

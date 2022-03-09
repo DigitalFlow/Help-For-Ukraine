@@ -132,6 +132,14 @@ export const personSecret = sequelize.define("personsecret", {
     type: DataTypes.DATE,
     defaultValue: sequelize.literal("NOW()")
   }
-}, { freezeTableName: true, timestamps: false, underscored: true });
+}, { 
+  freezeTableName: true,
+  timestamps: false,
+  underscored: true,
+  indexes: [{
+    unique: true,
+    fields: ["id", "person_id"]
+  }]
+});
 
 personSecret.belongsTo(person, { onDelete: "CASCADE" });

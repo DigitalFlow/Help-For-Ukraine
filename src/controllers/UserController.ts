@@ -189,7 +189,7 @@ export const getProfile = (req: Request, res: Response) => {
       return res.status(200).json(new ValidationResult({ success: false, errors: [`User not found.`] }));
     }
 
-    const user = result.rows[0] as DbUser;
+    const user = result.rows[0] as UserInfo;
 
     return res.json(user);
   })
@@ -201,7 +201,7 @@ export const getProfile = (req: Request, res: Response) => {
 export const getUserList = (req: Request, res: Response) => {
   pool.query("SELECT id, user_name, email, is_admin FROM help_for_ukraine.user ORDER BY user_name")
   .then(result => {
-    const users = result.rows as Array<DbUser>;
+    const users = result.rows as Array<UserInfo>;
 
     return res.json(users);
   })

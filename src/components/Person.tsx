@@ -7,7 +7,9 @@ import MessageBar from "./MessageBar";
 import * as uuid from "uuid";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
-import FieldGroup from "./FieldGroup";
+import { ensureSuccess } from "../domain/ensureSuccess";
+import { PersonEdit } from "./PersonEdit";
+import { PersonReadonly } from "./PersonReadonly";
 
 interface PersonState {
   person: DbPerson;
@@ -103,6 +105,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         method: "DELETE",
         credentials: "include"
       })
+      .then(ensureSuccess)
       .then(() => {
           this.setState({
               errors: [],
@@ -128,6 +131,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         body: JSON.stringify(this.state.person),
         headers: headers
       })
+      .then(ensureSuccess)
       .then(() => {
           this.setState({
               errors: [],
@@ -162,50 +166,11 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
               }
             </ButtonToolbar>
             <h1>Person</h1>
-            <Form>
-              <FieldGroup
-                id="firstNameText"
-                control={ { type: "text", value: this.state.person?.first_name ?? "", placeholder: "Enter first name", onChange: this.setFirstName } }
-                label="First Name"
-                help="Will be shown publicly"
-              />
-              <FieldGroup
-                id="lastNameText"
-                control={ { type: "text", value: this.state.person?.last_name ?? "", placeholder: "Enter last name", onChange: this.setLastName } }
-                label="Last Name"
-                help="Will be shown publicly"
-              />
-              <FieldGroup
-                id="cityText"
-                control={ { type: "text", value: this.state.person?.city ?? "", placeholder: "Enter city", onChange: this.setCity } }
-                label="City"
-                help="Not your current city, but your home city. Will be shown publicly."
-              />
-              <FieldGroup
-                id="descriptionText"
-                control={ { type: "text", value: this.state.person?.description ?? "", placeholder: "Enter description", onChange: this.setDescription } }
-                label="Description"
-                help="You can tell something about yourself so that your relatives can recognize you. Will be shown publicly, be careful."
-              />
-              <FieldGroup
-                id="questionText"
-                control={ { type: "text", value: this.state.person?.question ?? "", placeholder: "Enter question", onChange: this.setQuestion } }
-                label="Question"
-                help="Ask a question that only your family can answer. Do _NOT_ use anything easy to guess such as your eye / hair color or similar."
-              />
-              <FieldGroup
-                id="answerText"
-                control={ { type: "text", value: this.state.person?.secret_answer ?? "", placeholder: "Enter answer to question (secret)", onChange: this.setAnswer } }
-                label="Question Answer"
-                help="Minimum length: 4 characters. Your family will have to give the same answer as you do to see your contact information, so choose something they will get right."
-              />
-              <FieldGroup
-                id="contactInformationText"
-                control={ { type: "text", value: this.state.person?.contact_information ?? "", placeholder: "Leave a message for your relatives, how can you be contacted?", onChange: this.setContactInformation } }
-                label="Message for Family"
-                help="The message for your family can contain information on how to reach you. It is stored encrypted and can only be decrypted with the correct answer. Only you and people knowing the answer can view it."
-              />
-            </Form>
+            {
+              this.state.person.user_id === this.props.user.id
+                ? <PersonEdit person={this.state.person} setFirstName={this.setFirstName} setLastName={this.setLastName} setCity={this.setCity} setDescription={this.setDescription} setQuestion={this.setQuestion} setAnswer={this.setAnswer} setContactInformation={this.setContactInformation} />
+                : <PersonReadonly person={this.state.person} />
+            }
         </Well>
         );
     }
