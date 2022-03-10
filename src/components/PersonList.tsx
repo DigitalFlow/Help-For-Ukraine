@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DbPerson } from "../model/DbPerson";
-import { Tab, Row, Col, NavItem, Nav, Table, ButtonToolbar, ButtonGroup, Button } from "react-bootstrap";
+import { Tab, Row, Col, NavItem, Nav, Table, ButtonToolbar, ButtonGroup, Button, Alert } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
@@ -64,10 +64,13 @@ class PersonFinder extends React.PureComponent<ExtendedIBaseProps, PersonFinderS
   render () {
     return (
       <Well>
+        { !this.props.user &&
+            <Alert variant="info">Sign in to create a listing</Alert>
+        }
         <ButtonToolbar style={{ marginBottom: "5px" }}>
           <ButtonGroup>
             <LinkContainer key={ "newLink" } to={ "/person/new" }>
-              <Button style={{margin: "5px" }} variant="primary">New Person</Button>
+              <Button disabled={!this.props.user} style={{margin: "5px" }} variant="primary">New Person</Button>
             </LinkContainer>
           </ButtonGroup>
         </ButtonToolbar>
