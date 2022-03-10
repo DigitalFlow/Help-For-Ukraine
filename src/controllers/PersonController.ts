@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import ValidationResult from "../model/ValidationResult.js";
 import { pool } from "../domain/DbConnection.js";
 import { DbPerson } from "../model/DbPerson.js";
+import CryptoJS from "crypto-js";
+import { DbPersonSecret } from "../model/DbPersonSecret.js";
 
 export const getPersons = (req: Request, res: Response) => {
   const count = req.query.count;
@@ -82,13 +84,53 @@ export const upsertPerson = async (req: Request, res: Response) => {
 
     const values = [id, payload.first_name, payload.last_name, payload.city, payload.description, payload.question, req.user];
 
-    pool.query(query, values)
-    .then(result => {
-      res.sendStatus(200);
-    })
-    .catch(err => {
-      res.status(500).send(err.message);
-    });
+    await pool.query(query, values);
+
+    if (payload.contact_information && payload.secret_answer) {
+      // Passphrase automatically uses AES-256. We store it all lower case for making it easier for the family. There will be rate limiting and the secret is never exposed, so this should be fine.
+      const secret = payload.contact_information;
+      const encrypted = CryptoJS.AES.encrypt(JSON.stringify({ secret }), payload.secret_answer.toLocaleLowerCase()).toString();
+
+      const secretQuery = [
+        "INSERT INTO help_for_ukraine.personsecret(person_id, secret)",
+        "VALUES ($1, $2)",
+        "ON CONFLICT(person_id) DO",
+        "UPDATE SET secret=$2",
+        "WHERE help_for_ukraine.personsecret.person_id=$1;"
+      ].join("\n");
+
+      await pool.query(secretQuery, [id, encrypted ]);
+    }
+
+    res.sendStatus(200);
+  }
+  catch (e) {
+    res.status(500).send(e.message);
+  }
+};
+
+export const answerSecret = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const payload = req.body as DbPerson;
+
+  try {
+    const personSecrets = await pool.query("SELECT * FROM help_for_ukraine.personsecret WHERE person_id=$1", [ id ]);
+
+    if (personSecrets.rows.length < 1) {
+      return res.sendStatus(404);
+    }
+
+    const personSecret = personSecrets.rows[0] as DbPersonSecret;
+    const encrypted = personSecret.secret;
+
+    const result = CryptoJS.AES.decrypt(encrypted, payload.secret_answer.toLocaleLowerCase()).toString(CryptoJS.enc.Utf8);
+
+    if (!result) {
+      return res.sendStatus(400);
+    }
+
+    const decrypted = JSON.parse(result);
+    return res.status(200).send({ contact_information: decrypted.secret } as DbPerson);
   }
   catch (e) {
     res.status(500).send(e.message);

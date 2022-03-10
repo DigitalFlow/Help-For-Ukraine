@@ -129,14 +129,15 @@ app.post("/profile/:id", IsAdmin, userController.postProfile);
 app.post("/profile", IsAuthenticated, userController.postProfile);
 app.post("/signup", userController.postSignup);
 
-app.get("/posts", IsAuthenticated, postController.getPosts);
-app.get("/posts/:id", IsAuthenticated, postController.getPost);
+app.get("/posts", postController.getPosts);
+app.get("/posts/:id", postController.getPost);
 app.post("/posts/:id", IsAdmin, postController.upsertPost);
 app.delete("/posts/:id", IsAdmin, postController.deletePost);
 
 app.get("/persons", IsAuthenticated, personController.getPersons);
 app.get("/persons/:id", IsAuthenticated, personController.getPerson);
 app.post("/persons/:id", IsAuthenticated, personController.upsertPerson);
+app.post("/personsecret/:id", IsAuthenticated, personController.answerSecret);
 app.delete("/persons/:id", IsAuthenticated, personController.deletePerson);
 
 // Always return the main index.html, so react-router renders the route in the client

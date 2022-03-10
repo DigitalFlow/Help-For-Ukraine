@@ -36,21 +36,21 @@ export default class UserPromptModal extends React.PureComponent<UserPromptModal
 
   render() {
     return (
-      <div className="static-modal">
-        <Modal.Dialog>
+      <Modal show={true}>
           <Modal.Header>
             <Modal.Title>{ this.props.title }</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
             <p>{ this.props.text }</p>
+            { this.props.children }
           </Modal.Body>
 
           <Modal.Footer>
             <Button onClick={ () => this.triggerCallback(true) } variant="primary">Yes</Button>
             <Button onClick={ () => this.triggerCallback(false) } variant="default">No</Button>
           </Modal.Footer>
-        </Modal.Dialog>
-      </div>);
+        </Modal>
+    );
   }
 }

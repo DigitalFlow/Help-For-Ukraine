@@ -5,7 +5,7 @@ export default class UserInfo {
   created_on: string;
   id: string;
 
-  // This is super important. 
+  // This is super important.
   // When logging in, a db user is passed in here and all private information must get lost in the conversion
   constructor(props: UserInfo) {
       this.is_admin = props.is_admin;

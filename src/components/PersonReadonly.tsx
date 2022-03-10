@@ -32,4 +32,4 @@ export const PersonReadonly: React.FC<PersonEditProps> = (props) => {
             />
         </Form>
     );
-}
+};
