@@ -134,8 +134,8 @@ app.get("/posts/:id", postController.getPost);
 app.post("/posts/:id", IsAdmin, postController.upsertPost);
 app.delete("/posts/:id", IsAdmin, postController.deletePost);
 
-app.get("/persons", IsAuthenticated, personController.getPersons);
-app.get("/persons/:id", IsAuthenticated, personController.getPerson);
+app.get("/persons", personController.getPersons);
+app.get("/persons/:id", personController.getPerson);
 app.post("/persons/:id", IsAuthenticated, personController.upsertPerson);
 app.post("/personsecret/:id", IsAuthenticated, personController.answerSecret);
 app.delete("/persons/:id", IsAuthenticated, personController.deletePerson);

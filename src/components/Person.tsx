@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ButtonToolbar, ButtonGroup, Button, Form } from "react-bootstrap";
+import { ButtonToolbar, ButtonGroup, Button, Form, Alert } from "react-bootstrap";
 import { DbPerson } from "../model/DbPerson";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import ReactMarkdown from "react-markdown";
@@ -211,6 +211,9 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
 
       return (
         <Well>
+          { !this.props.user &&
+            <Alert variant="info">Sign in to answer the question and get information on how to reach out</Alert>
+          }
           {
             this.state.showModal &&
             <UserPromptModal title={this.state.modalSecret ? "Success!" : "Answer question"} text={this.state.modalSecret ? this.state.modalSecret : this.state.person.question} customFooter={this.state.modalSecret && <Button onClick={this.hideModal} variant="primary">Ok</Button>} yesCallBack={this.answerQuestion} noCallBack={this.hideModal}>
@@ -232,7 +235,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
                   <Button variant="primary" disabled={(!this.state.isNew && (!!this.state.person.contact_information !== !!this.state.person.secret_answer)) || (this.state.isNew && (details.length < 9 || details.some(v => !(v as string)?.trim())))} onClick={ this.save }>Save</Button>
                 }
                 { !this.state.isNew &&
-                  <Button variant="primary" onClick={ this.showModal }>Answer Question</Button>
+                  <Button variant="primary" disabled={!this.props.user} onClick={ this.showModal }>Answer Question</Button>
                 }
                 {
                   isOwner && !this.state.isNew &&

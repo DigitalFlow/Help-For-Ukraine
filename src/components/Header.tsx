@@ -26,11 +26,9 @@ export default class Header extends React.PureComponent<IBaseProps, undefined> {
                   <IndexLinkContainer to="/index">
                     <Nav.Link>Home</Nav.Link>
                   </IndexLinkContainer>
-                  { this.props.user &&
-                    <LinkContainer to="/personFinder">
-                      <Nav.Link>Person Finder</Nav.Link>
-                    </LinkContainer>
-                  }
+                  <LinkContainer to="/personFinder">
+                    <Nav.Link>Person Finder</Nav.Link>
+                  </LinkContainer>
                   {/* this.props.user &&
                     <LinkContainer to="/housing">
                       <Nav.Link>Housing</Nav.Link>
