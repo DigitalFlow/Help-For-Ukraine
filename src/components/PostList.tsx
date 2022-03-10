@@ -66,7 +66,7 @@ class PostList extends React.PureComponent<ExtendedIBaseProps, PostListState> {
   render () {
     return (
       <div>
-        <ButtonToolbar>
+        <ButtonToolbar style={{ marginBottom: "5px" }}>
           <ButtonGroup>
             <LinkContainer key={ "newLink" } to={ "/post/new" }>
               <Button style={{margin: "5px" }} variant="primary">New Post</Button>

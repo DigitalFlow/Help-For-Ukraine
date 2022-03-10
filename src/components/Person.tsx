@@ -157,6 +157,8 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
               errors: [],
               message: "Successfully saved person",
               isNew: false
+          }, () => {
+            this.props.history.push(`/person/${this.state.person.id}`);
           });
       })
       .catch(err => {
@@ -190,12 +192,15 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
       .then((r) => r.json())
       .then((r: DbPerson) => {
         this.setState({
+          errors: [],
           modalSecret: r.contact_information
         });
       })
       .catch((e) => {
         this.setState({
-          message: "Answer was not correct"
+          showModal: false,
+          modalAnswer: "",
+          errors: ["Answer was not correct"]
         });
       });
     }
@@ -208,18 +213,13 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         <Well>
           {
             this.state.showModal &&
-            <UserPromptModal title="Answer question" text={this.state.person.question} finally={this.hideModal} yesCallBack={this.answerQuestion} noCallBack={this.hideModal}>
+            <UserPromptModal title={this.state.modalSecret ? "Success!" : "Answer question"} text={this.state.modalSecret ? this.state.modalSecret : this.state.person.question} customFooter={this.state.modalSecret && <Button onClick={this.hideModal} variant="primary">Ok</Button>} yesCallBack={this.answerQuestion} noCallBack={this.hideModal}>
               {
-                !this.state.modalSecret
-                ? <FieldGroup
+                !this.state.modalSecret &&
+                <FieldGroup
                   id="modalAnswer"
                   control={ { type: "text", value: this.state.modalAnswer ?? "", placeholder: "Enter answer", onChange: this.setModalAnswer } }
                   label="Answer"
-                />
-                : <FieldGroup
-                  id="modalSecret"
-                  control={ { type: "text", value: this.state.modalSecret ?? "", onChange: () => {} } }
-                  label="Secret"
                 />
               }
             </UserPromptModal>
@@ -227,22 +227,18 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
           { this.state.person &&
             <>
               <MessageBar message= { this.state.message } errors={ this.state.errors } />
-              <ButtonToolbar>
-                { isOwner &&
-                  <ButtonGroup>
-                    <Button variant="primary" disabled={(!this.state.isNew && (!!this.state.person.contact_information && !!this.state.person.secret_answer)) || (this.state.isNew && (details.length < 8 || details.some(v => !(v as string)?.trim())))} onClick={ this.save }>Save</Button>
-                  </ButtonGroup>
+              <ButtonGroup>
+                { isOwner && // On update, you must either pass neither of contact_information and secret, or both. On Create, all fields have to have values
+                  <Button variant="primary" disabled={(!this.state.isNew && (!!this.state.person.contact_information !== !!this.state.person.secret_answer)) || (this.state.isNew && (details.length < 9 || details.some(v => !(v as string)?.trim())))} onClick={ this.save }>Save</Button>
+                }
+                { !this.state.isNew &&
+                  <Button variant="primary" onClick={ this.showModal }>Answer Question</Button>
                 }
                 {
                   isOwner && !this.state.isNew &&
-                  <ButtonGroup>
-                    <Button variant="danger" onClick={ this.delete }>Delete</Button>
-                  </ButtonGroup>
+                  <Button variant="danger" onClick={ this.delete }>Delete</Button>
                 }
-                <ButtonGroup>
-                  <Button variant="primary" onClick={ this.showModal }>Answer Question</Button>
-                </ButtonGroup>
-              </ButtonToolbar>
+              </ButtonGroup>
               <h1>Person</h1>
               {
                 isOwner

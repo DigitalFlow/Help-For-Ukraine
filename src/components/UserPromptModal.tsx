@@ -7,6 +7,7 @@ interface UserPromptModalProps {
   yesCallBack?: () => void;
   noCallBack?: () => void;
   finally?: () => void;
+  customFooter?: React.ReactNode;
 }
 
 export default class UserPromptModal extends React.PureComponent<UserPromptModalProps, undefined> {
@@ -47,8 +48,14 @@ export default class UserPromptModal extends React.PureComponent<UserPromptModal
           </Modal.Body>
 
           <Modal.Footer>
-            <Button onClick={ () => this.triggerCallback(true) } variant="primary">Yes</Button>
-            <Button onClick={ () => this.triggerCallback(false) } variant="default">No</Button>
+            {
+              this.props.customFooter
+              ? this.props.customFooter
+              : <>
+                <Button onClick={ () => this.triggerCallback(true) } variant="primary">Yes</Button>
+                <Button onClick={ () => this.triggerCallback(false) } variant="default">No</Button>
+              </>
+            }
           </Modal.Footer>
         </Modal>
     );

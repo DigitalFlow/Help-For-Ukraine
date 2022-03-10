@@ -64,7 +64,7 @@ class PersonFinder extends React.PureComponent<ExtendedIBaseProps, PersonFinderS
   render () {
     return (
       <Well>
-        <ButtonToolbar>
+        <ButtonToolbar style={{ marginBottom: "5px" }}>
           <ButtonGroup>
             <LinkContainer key={ "newLink" } to={ "/person/new" }>
               <Button style={{margin: "5px" }} variant="primary">New Person</Button>

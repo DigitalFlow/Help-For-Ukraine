@@ -13,8 +13,19 @@ export interface ReactTableProps<T extends DbRecord> {
 export const ReactTable: React.FC<ReactTableProps<any>> = ({data, columns, navigationPath}) => {
     const { getTableProps, headerGroups, rows, prepareRow } = useTable({
         columns,
-        data
-    }, useSortBy);
+        data,
+        sortTypes: {
+            alphanumeric: (rowA: Row, rowB: Row, columnName: string, desc: boolean) => {
+                const valueA = rowA.values[columnName]?.toLowerCase() ?? "";
+                const valueB = rowB.values[columnName]?.toLowerCase() ?? "";
+
+                if (desc) {
+                    return valueA.localeCompare(valueB) > 0 ? 1 : -1;
+                }
+                return valueB.localeCompare(valueA) > 0 ? -1 : 1;
+            }
+        }
+    } as any, useSortBy);
 
     // Render the UI for your table
     return (
