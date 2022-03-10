@@ -74,6 +74,10 @@ export const upsertPerson = async (req: Request, res: Response) => {
       }
     }
 
+    if (payload.secret_answer && payload.secret_answer.length < 4) {
+      return res.sendStatus(400);
+    }
+
     // user_id can be set initially, but no update possible
     const query = ["INSERT INTO help_for_ukraine.person(id, first_name, last_name, city, description, question, user_id)",
                 "VALUES ($1, $2, $3, $4, $5, $6, $7)",

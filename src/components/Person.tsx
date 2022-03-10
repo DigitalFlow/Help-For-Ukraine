@@ -215,6 +215,14 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
             <Alert variant="info">Sign in to answer the question and get information on how to reach out</Alert>
           }
           {
+            !this.state.isNew && this.state.person && (!this.state.person.contact_information !== !this.state.person.secret_answer) &&
+            <Alert variant="warning">When you change the secret answer, you also have to change the message for your family and vice versa. Leave empty for not changing it.</Alert>
+          }
+          {
+            this.state.person?.secret_answer && this.state.person.secret_answer.length < 4 &&
+            <Alert variant="warning">Your secret works like a password. It should be not less than 4 characters, more are better.</Alert>
+          }
+          {
             this.state.showModal &&
             <UserPromptModal title={this.state.modalSecret ? "Success!" : "Answer question"} text={this.state.modalSecret ? this.state.modalSecret : this.state.person.question} customFooter={this.state.modalSecret && <Button onClick={this.hideModal} variant="primary">Ok</Button>} yesCallBack={this.answerQuestion} noCallBack={this.hideModal}>
               {
@@ -231,8 +239,8 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
             <>
               <MessageBar message= { this.state.message } errors={ this.state.errors } />
               <ButtonGroup>
-                { isOwner && // On update, you must either pass neither of contact_information and secret, or both. On Create, all fields have to have values
-                  <Button variant="primary" disabled={(!this.state.isNew && (!!this.state.person.contact_information !== !!this.state.person.secret_answer)) || (this.state.isNew && (details.length < 9 || details.some(v => !(v as string)?.trim())))} onClick={ this.save }>Save</Button>
+                { isOwner && // On update, you must either pass both of contact_information and secret, or neither. On Create, all fields have to have values
+                  <Button variant="primary" disabled={(this.state.person.secret_answer && this.state.person.secret_answer.length < 4) || (!this.state.isNew && (!this.state.person.contact_information !== !this.state.person.secret_answer)) || (this.state.isNew && (details.length < 9 || details.some(v => !(v as string)?.trim())))} onClick={ this.save }>Save</Button>
                 }
                 { !this.state.isNew &&
                   <Button variant="primary" disabled={!this.props.user} onClick={ this.showModal }>Answer Question</Button>

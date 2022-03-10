@@ -39,15 +39,14 @@ export default class Header extends React.PureComponent<IBaseProps, undefined> {
                       <Nav.Link>Help</Nav.Link>
                     </LinkContainer>
                   */}
-
+                  <LinkContainer to="/impressum">
+                    <Nav.Link>Impressum</Nav.Link>
+                  </LinkContainer>
                   { this.props.user && this.props.user.is_admin &&
                     <LinkContainer to="/portalManagement">
                       <Nav.Link>Portal Management</Nav.Link>
                     </LinkContainer>
                   }
-                  <LinkContainer to="/impressum">
-                    <Nav.Link>Impressum</Nav.Link>
-                  </LinkContainer>
               </Nav>
               <Nav style={{ marginLeft: "auto" }} className="justify-content-end align-items-end">
                 { !this.props.user && <LinkContainer to="/login">
