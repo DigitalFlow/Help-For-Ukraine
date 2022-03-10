@@ -47,7 +47,7 @@ class WelcomePage extends React.PureComponent<ExtendedIBaseProps, WelcomePageSta
           <Col xs={6}>
             <Well>
               <h1>News</h1>
-              { this.props.user ? this.state.posts.map(p => <Post key={ p.id } post={ p } />) : "" }
+              { this.state.posts.map(p => <Post key={ p.id } post={ p } />) }
             </Well>
           </Col>
         </Row>
