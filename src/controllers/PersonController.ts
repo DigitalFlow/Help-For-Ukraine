@@ -137,6 +137,6 @@ export const answerSecret = async (req: Request, res: Response) => {
     return res.status(200).send({ contact_information: decrypted.secret } as DbPerson);
   }
   catch (e) {
-    res.status(500).send(e.message);
+    res.status(400).send(e.message);
   }
 };

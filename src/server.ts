@@ -28,6 +28,7 @@ import { IsAuthenticated, IsAdmin } from "./domain/AuthRestrictions";
 
 // Connect to MySQL
 import { pool, sequelize, User } from "./domain/DbConnection";
+import rateLimit from "express-rate-limit";
 
 console.log("Authenticating sequelize");
 
@@ -117,6 +118,16 @@ app.use((request, response, next) => {
 
 app.use(express.static(path.resolve(__dirname, "..", "dist")));
 
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 2, // Limit each user to 2 requests per minute per person listing
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers,
+  keyGenerator: (req, res) => `${req.user}_${req.params.id}`,
+  skipSuccessfulRequests: true,
+  skipFailedRequests: false
+});
+
 /**
  * Primary app routes.
  */
@@ -137,7 +148,7 @@ app.delete("/posts/:id", IsAdmin, postController.deletePost);
 app.get("/persons", personController.getPersons);
 app.get("/persons/:id", personController.getPerson);
 app.post("/persons/:id", IsAuthenticated, personController.upsertPerson);
-app.post("/personsecret/:id", IsAuthenticated, personController.answerSecret);
+app.post("/personsecret/:id", IsAuthenticated, limiter, personController.answerSecret);
 app.delete("/persons/:id", IsAuthenticated, personController.deletePerson);
 
 // Always return the main index.html, so react-router renders the route in the client

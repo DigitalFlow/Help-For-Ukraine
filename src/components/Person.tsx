@@ -7,7 +7,7 @@ import MessageBar from "./MessageBar";
 import * as uuid from "uuid";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
-import { ensureSuccess } from "../domain/ensureSuccess";
+import { ensureSuccess, RateLimitError } from "../domain/ensureSuccess";
 import { PersonEdit } from "./PersonEdit";
 import { PersonReadonly } from "./PersonReadonly";
 import UserPromptModal from "./UserPromptModal";
@@ -96,8 +96,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         return this.setState({
           person: {
             ...this.state.person,
-            id: uuid.v4(),
-            user_id: this.props.user.id
+            id: uuid.v4()
           },
           isNew: true
         });
@@ -197,16 +196,18 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         });
       })
       .catch((e) => {
-        this.setState({
-          showModal: false,
-          modalAnswer: "",
-          errors: ["Answer was not correct"]
-        });
+          this.setState({
+            showModal: false,
+            modalAnswer: "",
+            errors: e instanceof RateLimitError
+              ? [`Too many requests. Try again in ${e.response.headers.get("Retry-After")} seconds`]
+              : ["Answer was not correct"]
+          });
       });
     }
 
     render() {
-      const isOwner = this.state.person?.user_id === this.props.user?.id;
+      const isOwner = this.state.isNew || (this.state.person?.user_id && this.props.user?.id && this.state.person?.user_id === this.props.user?.id);
       const details = Object.values(this.state.person ?? {});
 
       return (
@@ -221,6 +222,10 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
           {
             this.state.person?.secret_answer && this.state.person.secret_answer.length < 4 &&
             <Alert variant="warning">Your secret works like a password. It should be not less than 4 characters, more are better.</Alert>
+          }
+          {
+            (this.state.isNew && (details.length < 9 || details.some(v => !(v as string)?.trim()))) &&
+            <Alert variant="warning">All fields have to be set on creation</Alert>
           }
           {
             this.state.showModal &&
