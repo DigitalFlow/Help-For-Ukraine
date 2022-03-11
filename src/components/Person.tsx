@@ -224,7 +224,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
             <Alert variant="warning">Your secret works like a password. It should be not less than 4 characters, more are better.</Alert>
           }
           {
-            (this.state.isNew && (details.length < 9 || details.some(v => !(v as string)?.trim()))) &&
+            (this.state.isNew && (details.length < 8 || details.some(v => !(v as string)?.trim()))) &&
             <Alert variant="warning">All fields have to be set on creation</Alert>
           }
           {
@@ -245,7 +245,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
               <MessageBar message= { this.state.message } errors={ this.state.errors } />
               <ButtonGroup>
                 { isOwner && // On update, you must either pass both of contact_information and secret, or neither. On Create, all fields have to have values
-                  <Button variant="primary" disabled={(this.state.person.secret_answer && this.state.person.secret_answer.length < 4) || (!this.state.isNew && (!this.state.person.contact_information !== !this.state.person.secret_answer)) || (this.state.isNew && (details.length < 9 || details.some(v => !(v as string)?.trim())))} onClick={ this.save }>Save</Button>
+                  <Button variant="primary" disabled={(this.state.person.secret_answer && this.state.person.secret_answer.length < 4) || (!this.state.isNew && (!this.state.person.contact_information !== !this.state.person.secret_answer)) || (this.state.isNew && (details.length < 8 || details.some(v => !(v as string)?.trim())))} onClick={ this.save }>Save</Button>
                 }
                 { !this.state.isNew &&
                   <Button variant="primary" disabled={!this.props.user} onClick={ this.showModal }>Answer Question</Button>

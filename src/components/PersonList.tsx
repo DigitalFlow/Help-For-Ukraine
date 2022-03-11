@@ -20,22 +20,23 @@ class PersonFinder extends React.PureComponent<ExtendedIBaseProps, PersonFinderS
     this.state = {
       persons: [],
       columns: [
-            {
-                Header: "First Name",
-                accessor: "first_name"
-            },
-            {
-                Header: "Last Name",
-                accessor: "last_name"
-            },
-            {
-                Header: "City",
-                accessor: "city"
-            },
-            {
-                Header: "Created On",
-                accessor: "created_on",
-            }
+        {
+            Header: "First Name",
+            accessor: "first_name"
+        },
+        {
+            Header: "Last Name",
+            accessor: "last_name"
+        },
+        {
+            Header: "City",
+            accessor: "city"
+        },
+        {
+            Header: "Created On",
+            accessor: "created_on",
+            Cell: (c) => c.row.original.created_on?.substring(0, 10) ?? ""
+        }
       ]
     };
 

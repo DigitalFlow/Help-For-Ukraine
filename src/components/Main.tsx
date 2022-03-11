@@ -11,6 +11,7 @@ import PostEdit from "./PostEdit";
 import PersonFinder from "./PersonList";
 import Person from "./Person";
 import Impressum from "./Impressum";
+import DataPrivacy from "./DataPrivacy";
 
 export default class Main extends React.PureComponent<IBaseProps, undefined> {
   constructor(props: IBaseProps) {
@@ -47,6 +48,9 @@ export default class Main extends React.PureComponent<IBaseProps, undefined> {
           </Route>
           <Route exact path="/impressum">
             <Impressum {...this.props} />
+          </Route>
+          <Route exact path="/dataprivacy">
+            <DataPrivacy {...this.props} />
           </Route>
           <Route exact path="/portalManagement">
             <PortalManagement {...this.props} />

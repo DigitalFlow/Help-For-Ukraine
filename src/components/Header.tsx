@@ -42,6 +42,9 @@ export default class Header extends React.PureComponent<IBaseProps, undefined> {
                   <LinkContainer to="/impressum">
                     <Nav.Link>Impressum</Nav.Link>
                   </LinkContainer>
+                  <LinkContainer to="/dataprivacy">
+                    <Nav.Link>Data Privacy</Nav.Link>
+                  </LinkContainer>
                   { this.props.user && this.props.user.is_admin &&
                     <LinkContainer to="/portalManagement">
                       <Nav.Link>Portal Management</Nav.Link>
