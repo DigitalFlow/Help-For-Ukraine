@@ -162,7 +162,7 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
                 control={ { type: "password", value: this.state.repeatPassword, placeholder: "Leave empty for not updating", onChange: this.repeatPassword } }
                 label="Repeat Password"
               />
-              { this.props.user && this.props.user.is_admin && <Form.Check key={ `${ this.state.userName }_isAdmin` } checked={ this.state.isAdmin } onChange={ this.setIsAdmin }>Is Admin</Form.Check> }
+              { this.props.user && this.props.user.is_admin && <Form.Check key={ `${ this.state.userName }_isAdmin` } value={ this.state.isAdmin as any } label="Is Admin" onChange={ this.setIsAdmin } /> }
               <Button onClick={ this.update } type="submit">
                 Submit
               </Button>

@@ -244,6 +244,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
             <>
               <MessageBar message= { this.state.message } errors={ this.state.errors } />
               <ButtonGroup>
+                <Button onClick={() => this.props.history.goBack()} style={{ marginRight: "5px" }}>←</Button>
                 { isOwner && // On update, you must either pass both of contact_information and secret, or neither. On Create, all fields have to have values
                   <Button variant="primary" disabled={(this.state.person.secret_answer && this.state.person.secret_answer.length < 4) || (!this.state.isNew && (!this.state.person.contact_information !== !this.state.person.secret_answer)) || (this.state.isNew && (details.length < 8 || details.some(v => !(v as string)?.trim())))} onClick={ this.save }>Save</Button>
                 }

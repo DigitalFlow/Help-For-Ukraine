@@ -106,7 +106,7 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
           <Well>
             <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <Form>
-              <h1>SignUp</h1>
+              <h1>Sign Up</h1>
               <FieldGroup
                 id="userNameText"
                 control={ { type: "text", placeholder: "Enter username", onChange: this.setUsername } }

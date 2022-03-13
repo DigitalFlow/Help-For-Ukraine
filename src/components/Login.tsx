@@ -86,10 +86,13 @@ class Login extends React.PureComponent<LoginProps, LoginState> {
                 label="Username"
               />
               <FieldGroup
-                id="foEditorrmControlsPassword"
+                id="passwordText"
                 control={ { type: "password", placeholder: "Enter password", onChange: this.setPassword } }
                 label="Password"
               />
+              <p>
+                By logging in, you understand and agree that a persistent cookie is stored which keeps you logged in for a week after log in or until you logout.
+              </p>
               <Button onClick={ this.login } type="button">
                 Submit
               </Button>

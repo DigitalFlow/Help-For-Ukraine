@@ -1,10 +1,12 @@
 import * as React from "react";
-import { Form } from "react-bootstrap";
+import { Form, Button, Col, FloatingLabel } from "react-bootstrap";
 import BTable from "react-bootstrap/Table";
+import BRow from "react-bootstrap/Row";
 import { LinkContainer } from "react-router-bootstrap";
-import { Column, Row, useTable, useSortBy, useFilters, useGlobalFilter, useAsyncDebounce } from "react-table";
+import { Column, Row, useTable, usePagination, useSortBy } from "react-table";
 import { AnyFunction } from "sequelize/types/utils";
 import { DbRecord } from "../model/DbRecord";
+import FieldGroup from "./FieldGroup";
 
 export interface ReactTableProps<T extends DbRecord> {
     data: Array<T>;
@@ -20,7 +22,21 @@ export const ReactTable: React.FC<ReactTableProps<any>> = (props) => {
         setData((props.data ?? []).filter(d => !searchText || props.columns.some(c => d && d[c.accessor as string]?.toLocaleLowerCase()?.includes(searchText.toLocaleLowerCase()))));
     }, [searchText, props.data]);
 
-    const { getTableProps, headerGroups, rows, prepareRow } = useTable({
+    const {
+        getTableProps,
+        headerGroups,
+        page,
+        prepareRow,
+        canPreviousPage,
+        canNextPage,
+        pageOptions,
+        pageCount,
+        gotoPage,
+        nextPage,
+        previousPage,
+        setPageSize,
+        state: { pageIndex, pageSize }
+    }: any = useTable({
         columns: props.columns,
         data,
         sortTypes: {
@@ -34,7 +50,7 @@ export const ReactTable: React.FC<ReactTableProps<any>> = (props) => {
                 return valueB.localeCompare(valueA) > 0 ? -1 : 1;
             }
         }
-    } as any, useSortBy);
+    } as any, useSortBy, usePagination);
 
     // Render the UI for your table
     return (
@@ -44,9 +60,9 @@ export const ReactTable: React.FC<ReactTableProps<any>> = (props) => {
             </Form>
             <BTable striped bordered hover size="sm" {...getTableProps()}>
                 <thead>
-                    {headerGroups.map(headerGroup => (
+                    {headerGroups.map((headerGroup: any) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map(column => (
+                            {headerGroup.headers.map((column: any) => (
                                 <th {...column.getHeaderProps((column as any).getSortByToggleProps())}>
                                     {column.render("Header")}
                                     {/* Add a sort direction indicator */}
@@ -63,7 +79,7 @@ export const ReactTable: React.FC<ReactTableProps<any>> = (props) => {
                     ))}
                 </thead>
                 <tbody>
-                {rows.map((row: Row<DbRecord>, i) => {
+                {page.map((row: Row<DbRecord>) => {
                     prepareRow(row);
                     return (
                         <LinkContainer key={ `${ row.original.id }_link` } to={ `/${props.navigationPath}/${ row.original.id }` }>
@@ -81,6 +97,66 @@ export const ReactTable: React.FC<ReactTableProps<any>> = (props) => {
                 })}
                 </tbody>
             </BTable>
+            <BRow>
+                <Col>
+                    <Button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                    {"<<"}
+                    </Button>{" "}
+                    <Button onClick={() => previousPage()} disabled={!canPreviousPage}>
+                    {"<"}
+                    </Button>{" "}
+                    <Button onClick={() => nextPage()} disabled={!canNextPage}>
+                    {">"}
+                    </Button>{" "}
+                    <Button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+                    {">>"}
+                    </Button>{" "}
+                    <span style={{ margin: "5px" }}>
+                        Page{" "}
+                        <strong>
+                            {pageIndex + 1} of {pageOptions.length}
+                        </strong>{" "}
+                    </span>
+                </Col>
+                <Col>
+                    <Form.Select
+                        id="goToPage"
+                        aria-label="Go to page"
+                        onChange={e => {
+                            const page = e.target.value ? Number(e.target.value) : 0;
+                            gotoPage(page);
+                        }}
+                        value={pageIndex}
+                    >
+                        {
+                            Array.from({ length: pageOptions.length })
+                            .map((_, i) => (
+                                <option key={i} value={i}>
+                                    Go to page {i + 1}
+                                </option>
+                            ))
+                        }
+                    </Form.Select>
+                </Col>
+                <Col>
+                    <Form.Select
+                        id="pageSize"
+                        aria-label="Page size"
+                        onChange={e => {
+                            setPageSize(Number(e.target.value));
+                        }}
+                        value={pageSize}
+                    >
+                        {
+                            [10, 20, 30, 40, 50].map(pageSize => (
+                                <option key={pageSize} value={pageSize}>
+                                    {pageSize} entries per page
+                                </option>
+                            ))
+                        }
+                    </Form.Select>
+                </Col>
+            </BRow>
         </div>
     );
 };
