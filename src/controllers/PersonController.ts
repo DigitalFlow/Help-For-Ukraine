@@ -4,11 +4,12 @@ import { pool } from "../domain/DbConnection.js";
 import { DbPerson } from "../model/DbPerson.js";
 import CryptoJS from "crypto-js";
 import { DbPersonSecret } from "../model/DbPersonSecret.js";
+import { IsAdmin } from "../domain/AuthRestrictions.js";
 
-export const getPersons = (req: Request, res: Response) => {
+const getPersonsBase = (req: Request, res: Response, published: boolean) => {
   const count = req.query.count;
 
-  pool.query(`SELECT * from help_for_ukraine.person ORDER BY created_on DESC ${ count ? `LIMIT $1` : "" };`, count ? [count] : [])
+  pool.query(`SELECT * from help_for_ukraine.person WHERE (published eq $1 or user_id eq $2) ORDER BY created_on DESC ${ count ? `LIMIT $3` : "" };`, count ? [published, req.user, count] : [published, req.user])
   .then(result => {
     res.json(result.rows);
   })
@@ -16,6 +17,10 @@ export const getPersons = (req: Request, res: Response) => {
     res.status(500).send(err.message);
   });
 };
+
+export const getPersons = (req: Request, res: Response) => getPersonsBase(req, res, true);
+
+export const getUnpublishedPersons = (req: Request, res: Response) => getPersonsBase(req, res, false);
 
 const findPersonById = (id: string) => pool.query("SELECT * from help_for_ukraine.person WHERE id=$1;", [id]);
 
@@ -44,10 +49,30 @@ export const deletePerson = async (req: Request, res: Response) => {
     const person = persons.rows[0];
 
     if (person.user_id !== req.user) {
-      return res.sendStatus(403);
+      if (!IsAdmin(req)) {
+        return res.sendStatus(403);
+      }
     }
 
     const result = await pool.query("DELETE from help_for_ukraine.person WHERE id=$1;", [id]);
+    return res.sendStatus(200);
+  }
+  catch (e) {
+    res.status(500).send(e.message);
+  }
+};
+
+export const publishPerson = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  try {
+    const persons = await findPersonById(id);
+
+    if (persons.rows.length < 1) {
+      return res.sendStatus(404);
+    }
+
+    await pool.query("UPDATE help_for_ukraine.person SET published=$2 WHERE id=$1;", [id, true]);
     return res.sendStatus(200);
   }
   catch (e) {
@@ -79,14 +104,14 @@ export const upsertPerson = async (req: Request, res: Response) => {
     }
 
     // user_id can be set initially, but no update possible
-    const query = ["INSERT INTO help_for_ukraine.person(id, first_name, last_name, city, description, question, user_id)",
-                "VALUES ($1, $2, $3, $4, $5, $6, $7)",
+    const query = ["INSERT INTO help_for_ukraine.person(id, first_name, last_name, city, description, question, published, user_id)",
+                "VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
                 "ON CONFLICT(id) DO",
-                "UPDATE SET first_name=$2, last_name=$3, city=$4, description=$5, question=$6",
+                "UPDATE SET first_name=$2, last_name=$3, city=$4, description=$5, question=$6, published=$7",
                 "WHERE help_for_ukraine.person.id=$1;"]
                 .join("\n");
 
-    const values = [id, payload.first_name, payload.last_name, payload.city, payload.description, payload.question, req.user];
+    const values = [id, payload.first_name, payload.last_name, payload.city, payload.description, payload.question, false, req.user];
 
     await pool.query(query, values);
 

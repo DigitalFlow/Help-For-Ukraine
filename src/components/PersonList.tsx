@@ -13,8 +13,12 @@ export interface PersonFinderState {
   columns: Array<Column<DbPerson>>;
 }
 
-class PersonFinder extends React.PureComponent<ExtendedIBaseProps, PersonFinderState> {
-  constructor (props: ExtendedIBaseProps) {
+export interface PersonFinderProps extends ExtendedIBaseProps {
+  showUnpublished?: boolean;
+}
+
+class PersonFinder extends React.PureComponent<PersonFinderProps, PersonFinderState> {
+  constructor (props: PersonFinderProps) {
     super(props);
 
     this.state = {
@@ -44,7 +48,7 @@ class PersonFinder extends React.PureComponent<ExtendedIBaseProps, PersonFinderS
   }
 
   fetchPersons () {
-    return fetch("/persons",
+    return fetch(this.props.showUnpublished ? "/unpublishedPersons" : "/persons",
     {
       credentials: "include"
     })

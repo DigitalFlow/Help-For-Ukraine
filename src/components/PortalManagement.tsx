@@ -7,10 +7,13 @@ import UserList from "./UserList";
 import PostList from "./PostList";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
+import { DbPerson } from "../model/DbPerson";
+import PersonList from "./PersonList";
 
 export class PortalManagementState {
   users: Array<DbUser>;
   posts: Array<DbPost>;
+  unpublishedPersons: Array<DbPerson>;
   postInput: string;
 }
 
@@ -21,6 +24,7 @@ class PortalManagement extends React.Component<ExtendedIBaseProps, PortalManagem
       this.state = {
         users: [],
         posts: [],
+        unpublishedPersons: [],
         postInput: "Demo"
       };
     }
@@ -29,7 +33,7 @@ class PortalManagement extends React.Component<ExtendedIBaseProps, PortalManagem
       return (
         <Tab.Container id="left-tabs-example" defaultActiveKey="users">
           <Row className="clearfix">
-            <Col sm={ 1 }>
+            <Col xs={ 2 }>
               <Nav variant="pills" className="flex-column">
                 <Nav.Item>
                   <Nav.Link eventKey="users">Users</Nav.Link>
@@ -37,9 +41,12 @@ class PortalManagement extends React.Component<ExtendedIBaseProps, PortalManagem
                 <Nav.Item>
                   <Nav.Link eventKey="posts">Posts</Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="persons">Unpublished Persons</Nav.Link>
+                </Nav.Item>
               </Nav>
             </Col>
-            <Col sm={ 11 }>
+            <Col xs={ 10 }>
               <Well>
                 <Tab.Content>
                   <Tab.Pane eventKey="users">
@@ -47,6 +54,9 @@ class PortalManagement extends React.Component<ExtendedIBaseProps, PortalManagem
                   </Tab.Pane>
                   <Tab.Pane eventKey="posts">
                     <PostList {...this.props} />
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="persons">
+                    <PersonList {...this.props} showUnpublished={true} />
                   </Tab.Pane>
                 </Tab.Content>
               </Well>

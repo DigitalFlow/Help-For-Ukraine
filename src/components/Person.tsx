@@ -51,6 +51,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         this.hideModal = this.hideModal.bind(this);
         this.setModalAnswer = this.setModalAnswer.bind(this);
         this.answerQuestion = this.answerQuestion.bind(this);
+        this.publish = this.publish.bind(this);
     }
 
     componentDidMount() {
@@ -160,9 +161,11 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
             this.props.history.push(`/person/${this.state.person.id}`);
           });
       })
-      .catch(err => {
+      .catch(e => {
         this.setState({
-          errors: [err.message]
+          errors: e instanceof RateLimitError
+            ? [`Too many requests. Try again in ${e.response.headers.get("Retry-After")} seconds`]
+            : [e.message]
         });
       });
     }
@@ -206,6 +209,32 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
       });
     }
 
+    publish() {
+      const headers = new Headers();
+      headers.set("Content-Type", "application/json");
+
+      fetch(`/publishPerson/${ this.state.person.id }`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: headers
+      })
+      .then(ensureSuccess)
+      .then((r) => r.json())
+      .then((r: DbPerson) => {
+        this.retrievePerson();
+      })
+      .catch((e) => {
+          this.setState({
+            showModal: false,
+            modalAnswer: "",
+            errors: e instanceof RateLimitError
+              ? [`Too many requests. Try again in ${e.response.headers.get("Retry-After")} seconds`]
+              : ["Error while publishing"]
+          });
+      });
+    }
+
     render() {
       const isOwner = this.state.isNew || (this.state.person?.user_id && this.props.user?.id && this.state.person?.user_id === this.props.user?.id);
       const details = Object.values(this.state.person ?? {});
@@ -214,6 +243,9 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         <Well>
           { !this.props.user &&
             <Alert variant="info">Sign in to answer the question and get information on how to reach out</Alert>
+          }
+          { !this.state.isNew && !this.state.person?.published &&
+            <Alert variant="warning">This listing is not yet shown publicly. An admin will review it and publish it if everything is fine.</Alert>
           }
           {
             !this.state.isNew && this.state.person && (!this.state.person.contact_information !== !this.state.person.secret_answer) &&
@@ -254,6 +286,10 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
                 {
                   isOwner && !this.state.isNew &&
                   <Button variant="danger" onClick={ this.delete }>Delete</Button>
+                }
+                {
+                  !this.state.person?.published && this.props.user && this.props.user.is_admin &&
+                  <Button variant="success" onClick={ this.publish }>Publish</Button>
                 }
               </ButtonGroup>
               <h1>Person</h1>

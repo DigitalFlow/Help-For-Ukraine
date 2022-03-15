@@ -104,6 +104,10 @@ export const person = sequelize.define("person", {
   created_on: {
     type: DataTypes.DATE,
     defaultValue: sequelize.literal("NOW()")
+  },
+  published: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
 }, { freezeTableName: true, timestamps: false, underscored: true });
 

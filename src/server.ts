@@ -24,7 +24,7 @@ import * as personController from "./controllers/PersonController";
 
 // Load authenticator
 import { Authentication } from "./domain/Authentication";
-import { IsAuthenticated, IsAdmin } from "./domain/AuthRestrictions";
+import { IsAuthenticated, EnsureAdmin } from "./domain/AuthRestrictions";
 
 // Connect to MySQL
 import { pool, sequelize, User } from "./domain/DbConnection";
@@ -128,37 +128,49 @@ const secretLimiter = rateLimit({
   skipFailedRequests: false
 });
 
+const personLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 2, // Limit each user to 2 profiles per window
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers,
+  keyGenerator: (req, res) => req.user,
+  skipSuccessfulRequests: false,
+  skipFailedRequests: true
+});
+
 const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 5, // Limit each user to 60 requests per minute
+  max: 60, // Limit each user to 60 requests per minute
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers,
   skipSuccessfulRequests: false,
   skipFailedRequests: false
 });
 
-app.use("/api", apiLimiter);
+app.use(apiLimiter);
 
 /**
  * Primary app routes.
  */
 app.post("/login", userController.postLogin);
 app.post("/logout", userController.postLogout);
-app.get("/retrieveProfile/:id", IsAdmin, userController.getProfile);
+app.get("/retrieveProfile/:id", EnsureAdmin, userController.getProfile);
 app.get("/retrieveProfile", IsAuthenticated, userController.getProfile);
-app.get("/userList", IsAdmin, userController.getUserList);
-app.post("/profile/:id", IsAdmin, userController.postProfile);
+app.get("/userList", EnsureAdmin, userController.getUserList);
+app.post("/profile/:id", EnsureAdmin, userController.postProfile);
 app.post("/profile", IsAuthenticated, userController.postProfile);
 app.post("/signup", userController.postSignup);
 
 app.get("/posts", postController.getPosts);
 app.get("/posts/:id", postController.getPost);
-app.post("/posts/:id", IsAdmin, postController.upsertPost);
-app.delete("/posts/:id", IsAdmin, postController.deletePost);
+app.post("/posts/:id", EnsureAdmin, postController.upsertPost);
+app.delete("/posts/:id", EnsureAdmin, postController.deletePost);
 
 app.get("/persons", personController.getPersons);
 app.get("/persons/:id", personController.getPerson);
-app.post("/persons/:id", IsAuthenticated, personController.upsertPerson);
+app.get("/unpublishedPersons", EnsureAdmin, personController.getUnpublishedPersons);
+app.post("/publishPerson/:id", EnsureAdmin, personController.publishPerson);
+app.post("/persons/:id", IsAuthenticated, personLimiter, personController.upsertPerson);
 app.post("/personsecret/:id", IsAuthenticated, secretLimiter, personController.answerSecret);
 app.delete("/persons/:id", IsAuthenticated, personController.deletePerson);
 

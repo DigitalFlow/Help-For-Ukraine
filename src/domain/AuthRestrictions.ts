@@ -10,20 +10,27 @@ export function IsAuthenticated(req: Request, res: Response, next: Function) {
     return next();
 }
 
-export function IsAdmin(req: Request, res: Response, next: Function) {
+export const IsAdmin = async (req: Request) => {
   if (!req.user) {
-    return res.sendStatus(403);
+    return false;
   }
 
-  pool.query(`SELECT is_admin FROM help_for_ukraine.user WHERE id = '${ req.user }'`)
+  return pool.query(`SELECT is_admin FROM help_for_ukraine.user WHERE id = '${ req.user }'`)
   .then(result => {
     if (result.rowCount < 1) {
-      return res.sendStatus(403);
+      return false;
     }
 
     const user = result.rows[0] as DbUser;
 
-    if (!user.is_admin) {
+    return !!user.is_admin;
+  });
+};
+
+export function EnsureAdmin(req: Request, res: Response, next: Function) {
+  IsAdmin(req)
+  .then((isUserAdmin) => {
+    if (!isUserAdmin) {
       return res.sendStatus(403);
     }
     else {

@@ -9,6 +9,7 @@ export interface DbPerson extends DbRecord {
     question: string;
     user_id: string;
     created_on: string;
+    published: boolean;
 
     // These are not saved in the actual database person table, only for sending data
     contact_information: string;
