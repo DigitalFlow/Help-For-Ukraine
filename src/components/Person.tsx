@@ -1,4 +1,5 @@
 import * as React from "react";
+import _ from "lodash";
 import { ButtonToolbar, ButtonGroup, Button, Form, Alert } from "react-bootstrap";
 import { DbPerson } from "../model/DbPerson";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
@@ -21,7 +22,10 @@ interface PersonState {
   showModal: boolean;
   modalAnswer: string;
   modalSecret: string;
+  answerAttempts: number;
 }
+
+const lockedOutMsg = "You've been locked out for 60 seconds";
 
 class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
     constructor(props: ExtendedIBaseProps) {
@@ -34,7 +38,8 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
           errors: [],
           showModal: false,
           modalAnswer: "",
-          modalSecret: ""
+          modalSecret: "",
+          answerAttempts: 0
         };
 
         this.retrievePerson = this.retrievePerson.bind(this);
@@ -178,6 +183,21 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
       this.setState({ showModal: false, modalAnswer: "" });
     }
 
+    updateAndGetAnswerAttempts = () => {
+      let { answerAttempts, errors } = this.state;
+      answerAttempts += 1;
+      this.setState({ answerAttempts });
+
+      if (answerAttempts > 1) {
+        setTimeout(() => {
+          errors = _.pull(errors, lockedOutMsg);
+          this.setState({ answerAttempts: 0, errors });
+        }, 60 * 1000);
+      }
+
+      return answerAttempts;
+    }
+
     answerQuestion() {
       const personId = this.state.person.id;
       const headers = new Headers();
@@ -199,12 +219,19 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         });
       })
       .catch((e) => {
+          const attempts = this.updateAndGetAnswerAttempts();
+          const errors = e instanceof RateLimitError
+            ? [`Too many requests. Try again in ${e.response.headers.get("Retry-After")} seconds`]
+            : ["Answer was not correct"];
+
+          if (attempts > 1) {
+            errors.push(lockedOutMsg);
+          }
+
           this.setState({
             showModal: false,
             modalAnswer: "",
-            errors: e instanceof RateLimitError
-              ? [`Too many requests. Try again in ${e.response.headers.get("Retry-After")} seconds`]
-              : ["Answer was not correct"]
+            errors
           });
       });
     }
@@ -238,6 +265,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
     render() {
       const isOwner = this.state.isNew || (this.state.person?.user_id && this.props.user?.id && this.state.person?.user_id === this.props.user?.id);
       const details = Object.values(this.state.person ?? {});
+      const { answerAttempts } = this.state;
 
       return (
         <Well>
@@ -281,7 +309,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
                   <Button variant="primary" disabled={(this.state.person.secret_answer && this.state.person.secret_answer.length < 4) || (!this.state.isNew && (!this.state.person.contact_information !== !this.state.person.secret_answer)) || (this.state.isNew && (details.length < 8 || details.some(v => !(v as string)?.trim())))} onClick={ this.save }>Save</Button>
                 }
                 { !this.state.isNew &&
-                  <Button variant="primary" disabled={!this.props.user} onClick={ this.showModal }>Answer Question</Button>
+                  <Button variant="primary" disabled={!this.props.user || answerAttempts > 1} onClick={ this.showModal }>Answer Question</Button>
                 }
                 {
                   isOwner && !this.state.isNew &&
