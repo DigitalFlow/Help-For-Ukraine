@@ -6,10 +6,13 @@ import CryptoJS from "crypto-js";
 import { DbPersonSecret } from "../model/DbPersonSecret.js";
 import { IsAdmin } from "../domain/AuthRestrictions.js";
 
-const getPersonsBase = (req: Request, res: Response, published: boolean) => {
+const getPersonsBase = (req: Request, res: Response, approved: boolean) => {
   const count = req.query.count;
+  const [query, params] = approved
+    ? [`SELECT * from help_for_ukraine.person WHERE approved = true OR user_id = $1 ORDER BY created_on DESC ${ count ? `LIMIT $2` : "" };`, count ? [req.user, count] : [req.user] ]
+    : [`SELECT * from help_for_ukraine.person WHERE approved <> true AND user_id = $1 ORDER BY created_on DESC ${ count ? `LIMIT $2` : "" };`, count ? [req.user, count] : [req.user] ];
 
-  pool.query(`SELECT * from help_for_ukraine.person WHERE (published eq $1 or user_id eq $2) ORDER BY created_on DESC ${ count ? `LIMIT $3` : "" };`, count ? [published, req.user, count] : [published, req.user])
+  pool.query(query, params)
   .then(result => {
     res.json(result.rows);
   })
@@ -20,7 +23,7 @@ const getPersonsBase = (req: Request, res: Response, published: boolean) => {
 
 export const getPersons = (req: Request, res: Response) => getPersonsBase(req, res, true);
 
-export const getUnpublishedPersons = (req: Request, res: Response) => getPersonsBase(req, res, false);
+export const getUnapprovedPersons = (req: Request, res: Response) => getPersonsBase(req, res, false);
 
 const findPersonById = (id: string) => pool.query("SELECT * from help_for_ukraine.person WHERE id=$1;", [id]);
 
@@ -72,7 +75,7 @@ export const publishPerson = async (req: Request, res: Response) => {
       return res.sendStatus(404);
     }
 
-    await pool.query("UPDATE help_for_ukraine.person SET published=$2 WHERE id=$1;", [id, true]);
+    await pool.query("UPDATE help_for_ukraine.person SET approved=$2 WHERE id=$1;", [id, true]);
     return res.sendStatus(200);
   }
   catch (e) {
@@ -104,10 +107,10 @@ export const upsertPerson = async (req: Request, res: Response) => {
     }
 
     // user_id can be set initially, but no update possible
-    const query = ["INSERT INTO help_for_ukraine.person(id, first_name, last_name, city, description, question, published, user_id)",
+    const query = ["INSERT INTO help_for_ukraine.person(id, first_name, last_name, city, description, question, approved, user_id)",
                 "VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
                 "ON CONFLICT(id) DO",
-                "UPDATE SET first_name=$2, last_name=$3, city=$4, description=$5, question=$6, published=$7",
+                "UPDATE SET first_name=$2, last_name=$3, city=$4, description=$5, question=$6, approved=$7",
                 "WHERE help_for_ukraine.person.id=$1;"]
                 .join("\n");
 

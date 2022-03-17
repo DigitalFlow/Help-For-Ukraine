@@ -244,7 +244,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
           { !this.props.user &&
             <Alert variant="info">Sign in to answer the question and get information on how to reach out</Alert>
           }
-          { !this.state.isNew && !this.state.person?.published &&
+          { !this.state.isNew && !this.state.person?.approved &&
             <Alert variant="warning">This listing is not yet shown publicly. An admin will review it and publish it if everything is fine.</Alert>
           }
           {
@@ -288,7 +288,7 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
                   <Button variant="danger" onClick={ this.delete }>Delete</Button>
                 }
                 {
-                  !this.state.person?.published && this.props.user && this.props.user.is_admin &&
+                  !this.state.person?.approved && this.props.user && this.props.user.is_admin &&
                   <Button variant="success" onClick={ this.publish }>Publish</Button>
                 }
               </ButtonGroup>

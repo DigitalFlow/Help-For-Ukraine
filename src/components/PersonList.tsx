@@ -14,7 +14,7 @@ export interface PersonFinderState {
 }
 
 export interface PersonFinderProps extends ExtendedIBaseProps {
-  showUnpublished?: boolean;
+  showUnapproved?: boolean;
 }
 
 class PersonFinder extends React.PureComponent<PersonFinderProps, PersonFinderState> {
@@ -48,7 +48,7 @@ class PersonFinder extends React.PureComponent<PersonFinderProps, PersonFinderSt
   }
 
   fetchPersons () {
-    return fetch(this.props.showUnpublished ? "/unpublishedPersons" : "/persons",
+    return fetch(this.props.showUnapproved ? "/persons/unapproved" : "/persons",
     {
       credentials: "include"
     })

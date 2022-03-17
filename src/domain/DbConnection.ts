@@ -105,7 +105,7 @@ export const person = sequelize.define("person", {
     type: DataTypes.DATE,
     defaultValue: sequelize.literal("NOW()")
   },
-  published: {
+  approved: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   }
@@ -147,3 +147,21 @@ export const personSecret = sequelize.define("personsecret", {
 });
 
 personSecret.belongsTo(person, { onDelete: "CASCADE" });
+
+export const Version = sequelize.define("version", {
+  id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    primaryKey: true,
+    defaultValue: sequelize.literal("gen_random_uuid()")
+  },
+  version_number: {
+    type: DataTypes.DECIMAL,
+    allowNull: false,
+    unique: true
+  },
+  created_on: {
+    type: DataTypes.DATE,
+    defaultValue: sequelize.literal("NOW()")
+  }
+}, { freezeTableName: true, timestamps: false, underscored: true });
