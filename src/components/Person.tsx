@@ -195,7 +195,9 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
             showModal: false,
             modalAnswer: "",
           }, () =>
-            this.props.setErrors([new Error("Answer was not correct")])
+            e instanceof RateLimitError
+              ? this.props.setErrors([e])
+              : this.props.setErrors([new Error("Answer was not correct")])
           );
       });
     }
