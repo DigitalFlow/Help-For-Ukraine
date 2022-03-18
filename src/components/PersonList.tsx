@@ -7,6 +7,7 @@ import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
 import { ReactTable } from "./ReactTable";
 import { Column } from "react-table";
+import { ensureSuccess } from "../domain/ensureSuccess";
 
 export interface PersonFinderState {
   persons: Array<DbPerson>;
@@ -52,6 +53,7 @@ class PersonFinder extends React.PureComponent<PersonFinderProps, PersonFinderSt
     {
       credentials: "include"
     })
+    .then(ensureSuccess)
     .then(results => {
       return results.json();
     })
@@ -59,6 +61,9 @@ class PersonFinder extends React.PureComponent<PersonFinderProps, PersonFinderSt
         this.setState({
             persons: persons
         });
+    })
+    .catch(e => {
+      this.props.setErrors([e]);
     });
   }
 

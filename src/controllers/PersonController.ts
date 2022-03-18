@@ -10,7 +10,7 @@ const getPersonsBase = (req: Request, res: Response, approved: boolean) => {
   const count = req.query.count;
   const [query, params] = approved
     ? [`SELECT * from help_for_ukraine.person WHERE approved = true OR user_id = $1 ORDER BY created_on DESC ${ count ? `LIMIT $2` : "" };`, count ? [req.user, count] : [req.user] ]
-    : [`SELECT * from help_for_ukraine.person WHERE approved <> true AND user_id = $1 ORDER BY created_on DESC ${ count ? `LIMIT $2` : "" };`, count ? [req.user, count] : [req.user] ];
+    : [`SELECT * from help_for_ukraine.person WHERE approved <> true ORDER BY created_on DESC ${ count ? `LIMIT $1` : "" };`, count ? [count] : undefined ];
 
   pool.query(query, params)
   .then(result => {

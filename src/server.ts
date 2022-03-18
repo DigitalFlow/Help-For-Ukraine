@@ -148,6 +148,15 @@ const apiLimiter = rateLimit({
   skipFailedRequests: false
 });
 
+const signUpLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 1, // Limit each ip to one sign up per 5 minutes
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers,
+  skipSuccessfulRequests: false,
+  skipFailedRequests: true
+});
+
 app.use(apiLimiter);
 
 /**
@@ -160,7 +169,7 @@ app.get("/retrieveProfile", IsAuthenticated, userController.getProfile);
 app.get("/userList", EnsureAdmin, userController.getUserList);
 app.post("/profile/:id", EnsureAdmin, userController.postProfile);
 app.post("/profile", IsAuthenticated, userController.postProfile);
-app.post("/signup", userController.postSignup);
+app.post("/signup", signUpLimiter, userController.postSignup);
 
 app.get("/posts", postController.getPosts);
 app.get("/posts/:id", postController.getPost);

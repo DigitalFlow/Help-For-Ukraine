@@ -7,6 +7,7 @@ import MessageBar from "./MessageBar";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
+import { ensureSuccess } from "../domain/ensureSuccess";
 
 export interface LoginProps extends ExtendedIBaseProps {
     redirectComponent?: string;
@@ -15,7 +16,6 @@ export interface LoginProps extends ExtendedIBaseProps {
 interface LoginState {
     userName: string;
     password: string;
-    errors: Array<string>;
 }
 
 // 'HelloProps' describes the shape of props.
@@ -26,8 +26,7 @@ class Login extends React.PureComponent<LoginProps, LoginState> {
 
         this.state = {
           userName: "",
-          password: "",
-          errors: []
+          password: ""
         };
 
         this.setUsername = this.setUsername.bind(this);
@@ -57,27 +56,28 @@ class Login extends React.PureComponent<LoginProps, LoginState> {
           password: this.state.password
         }))
       })
+      .then(ensureSuccess)
       .then(results => {
         return results.json();
       })
       .then((data: ValidationResult) => {
         if (!data.success) {
-          this.setState({
-            errors: data.errors
-          });
+          this.props.setErrors(data.errors.map(e => new Error(e)));
         }
         else {
           // Reload so that App initializes again with User in state.
           this.props.triggerUserReload();
           this.props.history.push("/index");
         }
+      })
+      .catch(e => {
+        this.props.setErrors([e]);
       });
     }
 
     render() {
         return (
           <Well>
-            <MessageBar errors={ this.state.errors } />
             <h1>Login</h1>
             <Form>
               <FieldGroup

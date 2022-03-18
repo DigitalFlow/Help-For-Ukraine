@@ -7,6 +7,7 @@ import MessageBar from "./MessageBar";
 import { withRouter } from "react-router-dom";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { Well } from "./Well";
+import { ensureSuccess } from "../domain/ensureSuccess";
 
 export interface SignUpProps extends ExtendedIBaseProps {
     redirectComponent?: string;
@@ -17,8 +18,6 @@ interface SignUpState {
     password: string;
     repeatPassword: string;
     email: string;
-    errors: Array<string>;
-    message: string;
 }
 
 // 'HelloProps' describes the shape of props.
@@ -31,9 +30,7 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
             userName: "",
             password: "",
             repeatPassword: "",
-            email: "",
-            errors: [],
-            message: ""
+            email: ""
         };
 
         this.setUsername = this.setUsername.bind(this);
@@ -61,7 +58,7 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
 
     signUp() {
       if (this.state.password !== this.state.repeatPassword) {
-        return this.setState({ errors: ["Password and repeat passwords don't match, please enter them again."] });
+        return this.props.setErrors([ new Error("Password and repeat passwords don't match, please enter them again.") ]);
       }
 
       const headers = new Headers();
@@ -78,33 +75,29 @@ class SignUp extends React.PureComponent<SignUpProps, SignUpState> {
         })),
         credentials: "include"
       })
+      .then(ensureSuccess)
       .then(results => {
         return results.json();
       })
       .then((data: ValidationResult) => {
         if (!data.success) {
-          this.setState({
-            errors: data.errors
-          });
+          this.props.setErrors(data.errors.map(e => new Error(e)));
         }
         else {
-          this.setState({
-            message: "Success! You may now log in.",
-            errors: []
-          });
+          this.props.setMessageBar(
+            "Success! You may now log in.",
+            undefined
+          );
         }
       })
-      .catch((e) => {
-        this.setState({
-          errors: [e.message]
-        });
+      .catch(e => {
+        this.props.setErrors([e]);
       });
     }
 
     render() {
         return (
           <Well>
-            <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <Form>
               <h1>Sign Up</h1>
               <FieldGroup

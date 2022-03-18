@@ -6,6 +6,7 @@ import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
 import { ReactTable } from "./ReactTable";
 import { Column } from "react-table";
+import { ensureSuccess } from "../domain/ensureSuccess";
 
 export interface PostListState {
   posts: Array<DbPost>;
@@ -49,6 +50,7 @@ class PostList extends React.PureComponent<ExtendedIBaseProps, PostListState> {
     {
       credentials: "include"
     })
+    .then(ensureSuccess)
     .then(results => {
       return results.json();
     })
@@ -56,6 +58,9 @@ class PostList extends React.PureComponent<ExtendedIBaseProps, PostListState> {
         this.setState({
             posts: posts
         });
+    })
+    .catch(e => {
+      this.props.setErrors([e]);
     });
   }
 

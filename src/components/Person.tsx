@@ -15,8 +15,6 @@ import FieldGroup from "./FieldGroup";
 
 interface PersonState {
   person: DbPerson;
-  message: string;
-  errors: Array<string>;
   isNew: boolean;
   showModal: boolean;
   modalAnswer: string;
@@ -30,8 +28,6 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         this.state = {
           person: undefined,
           isNew: false,
-          message: "",
-          errors: [],
           showModal: false,
           modalAnswer: "",
           modalSecret: ""
@@ -107,13 +103,17 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
       {
         credentials: "include"
       })
+      .then(ensureSuccess)
       .then(results => {
         return results.json();
       })
       .then((persons: Array<DbPerson>) => {
           this.setState({
               person: persons[0]
-          });
+          }, () => this.props.setMessageBar(undefined, undefined) );
+      })
+      .catch(e => {
+        this.props.setErrors([e]);
       });
     }
 
@@ -127,15 +127,10 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
       })
       .then(ensureSuccess)
       .then(() => {
-          this.setState({
-              errors: [],
-              message: "Successfully deleted person"
-          });
+          this.props.setMessageBar("Successfully deleted person", undefined);
       })
-      .catch(err => {
-        this.setState({
-          errors: [err.message]
-        });
+      .catch(e => {
+        this.props.setErrors([e]);
       });
     }
 
@@ -154,19 +149,17 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
       .then(ensureSuccess)
       .then(() => {
           this.setState({
-              errors: [],
-              message: "Successfully saved person",
               isNew: false
           }, () => {
+            this.props.setMessageBar(
+              "Successfully saved person",
+              undefined
+            );
             this.props.history.push(`/person/${this.state.person.id}`);
           });
       })
       .catch(e => {
-        this.setState({
-          errors: e instanceof RateLimitError
-            ? [`Too many requests. Try again in ${e.response.headers.get("Retry-After")} seconds`]
-            : [e.message]
-        });
+        this.props.setErrors([e]);
       });
     }
 
@@ -194,18 +187,16 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
       .then((r) => r.json())
       .then((r: DbPerson) => {
         this.setState({
-          errors: [],
           modalSecret: r.contact_information
-        });
+        }, () => this.props.setErrors(undefined));
       })
       .catch((e) => {
           this.setState({
             showModal: false,
             modalAnswer: "",
-            errors: e instanceof RateLimitError
-              ? [`Too many requests. Try again in ${e.response.headers.get("Retry-After")} seconds`]
-              : ["Answer was not correct"]
-          });
+          }, () =>
+            this.props.setErrors([new Error("Answer was not correct")])
+          );
       });
     }
 
@@ -220,18 +211,16 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
         headers: headers
       })
       .then(ensureSuccess)
-      .then((r) => r.json())
-      .then((r: DbPerson) => {
+      .then(() => {
         this.retrievePerson();
       })
       .catch((e) => {
           this.setState({
             showModal: false,
             modalAnswer: "",
-            errors: e instanceof RateLimitError
-              ? [`Too many requests. Try again in ${e.response.headers.get("Retry-After")} seconds`]
-              : ["Error while publishing"]
-          });
+          }, () =>
+            this.props.setErrors([e])
+          );
       });
     }
 
@@ -274,7 +263,6 @@ class Person extends React.PureComponent<ExtendedIBaseProps, PersonState> {
           }
           { this.state.person &&
             <>
-              <MessageBar message= { this.state.message } errors={ this.state.errors } />
               <ButtonGroup>
                 <Button onClick={() => this.props.history.goBack()} style={{ marginRight: "5px" }}>←</Button>
                 { isOwner && // On update, you must either pass both of contact_information and secret, or neither. On Create, all fields have to have values

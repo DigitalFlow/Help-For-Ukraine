@@ -5,6 +5,7 @@ import  { DbPost  } from "../model/DbPost";
 import Post from "./Post";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
+import { ensureSuccess } from "../domain/ensureSuccess";
 
 interface WelcomePageState {
   posts: Array<DbPost>;
@@ -24,6 +25,7 @@ class WelcomePage extends React.PureComponent<ExtendedIBaseProps, WelcomePageSta
     {
       credentials: "include"
     })
+    .then(ensureSuccess)
     .then(results => {
       return results.json();
     })
@@ -31,6 +33,9 @@ class WelcomePage extends React.PureComponent<ExtendedIBaseProps, WelcomePageSta
         this.setState({
             posts: posts
         });
+    })
+    .catch(e => {
+      this.props.setErrors([e]);
     });
   }
 
