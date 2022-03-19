@@ -7,6 +7,7 @@ import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
 import { ReactTable } from "./ReactTable";
 import { Column } from "react-table";
+import { ensureSuccess } from "../domain/ensureSuccess";
 
 export interface PersonFinderState {
   persons: Array<DbPerson>;
@@ -14,7 +15,7 @@ export interface PersonFinderState {
 }
 
 export interface PersonFinderProps extends ExtendedIBaseProps {
-  showUnpublished?: boolean;
+  showUnapproved?: boolean;
 }
 
 class PersonFinder extends React.PureComponent<PersonFinderProps, PersonFinderState> {
@@ -48,10 +49,11 @@ class PersonFinder extends React.PureComponent<PersonFinderProps, PersonFinderSt
   }
 
   fetchPersons () {
-    return fetch(this.props.showUnpublished ? "/unpublishedPersons" : "/persons",
+    return fetch(this.props.showUnapproved ? "/persons/unapproved" : "/persons",
     {
       credentials: "include"
     })
+    .then(ensureSuccess)
     .then(results => {
       return results.json();
     })
@@ -59,6 +61,9 @@ class PersonFinder extends React.PureComponent<PersonFinderProps, PersonFinderSt
         this.setState({
             persons: persons
         });
+    })
+    .catch(e => {
+      this.props.setErrors([e]);
     });
   }
 

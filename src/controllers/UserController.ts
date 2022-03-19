@@ -199,7 +199,7 @@ export const getProfile = (req: Request, res: Response) => {
 };
 
 export const getUserList = (req: Request, res: Response) => {
-  pool.query("SELECT id, user_name, email, is_admin FROM help_for_ukraine.user ORDER BY user_name")
+  pool.query("SELECT id, user_name, email, is_admin, created_on FROM help_for_ukraine.user ORDER BY user_name")
   .then(result => {
     const users = result.rows as Array<UserInfo>;
 

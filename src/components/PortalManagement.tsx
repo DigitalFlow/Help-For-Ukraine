@@ -13,7 +13,7 @@ import PersonList from "./PersonList";
 export class PortalManagementState {
   users: Array<DbUser>;
   posts: Array<DbPost>;
-  unpublishedPersons: Array<DbPerson>;
+  unapprovedPersons: Array<DbPerson>;
   postInput: string;
 }
 
@@ -24,7 +24,7 @@ class PortalManagement extends React.Component<ExtendedIBaseProps, PortalManagem
       this.state = {
         users: [],
         posts: [],
-        unpublishedPersons: [],
+        unapprovedPersons: [],
         postInput: "Demo"
       };
     }
@@ -42,7 +42,7 @@ class PortalManagement extends React.Component<ExtendedIBaseProps, PortalManagem
                   <Nav.Link eventKey="posts">Posts</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="persons">Unpublished Persons</Nav.Link>
+                  <Nav.Link eventKey="persons">Unapproved Persons</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>
@@ -56,7 +56,7 @@ class PortalManagement extends React.Component<ExtendedIBaseProps, PortalManagem
                     <PostList {...this.props} />
                   </Tab.Pane>
                   <Tab.Pane eventKey="persons">
-                    <PersonList {...this.props} showUnpublished={true} />
+                    <PersonList {...this.props} showUnapproved={true} />
                   </Tab.Pane>
                 </Tab.Content>
               </Well>

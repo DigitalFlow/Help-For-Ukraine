@@ -5,18 +5,14 @@ import MessageBar from "./MessageBar";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
+import { ensureSuccess } from "../domain/ensureSuccess";
 
 export interface LogoutState {
-  errors: Array<string>;
 }
 
 class Logout extends React.PureComponent<ExtendedIBaseProps, LogoutState> {
     constructor(props: ExtendedIBaseProps) {
         super(props);
-
-        this.state = {
-            errors: []
-        };
     }
 
     componentDidMount() {
@@ -29,6 +25,7 @@ class Logout extends React.PureComponent<ExtendedIBaseProps, LogoutState> {
             credentials: "include",
             body: JSON.stringify({ })
         })
+        .then(ensureSuccess)
         .then(results => {
           return results.json();
         })
@@ -38,18 +35,17 @@ class Logout extends React.PureComponent<ExtendedIBaseProps, LogoutState> {
             this.props.history.push("/index");
           }
           else {
-            this.setState({ errors: result.errors });
+            this.props.setErrors(result.errors.map(e => new Error(e)));
           }
         })
-        .catch(err => {
-          this.setState({ errors: [err.message] });
+        .catch(e => {
+          this.props.setErrors([e]);
         });
     }
 
     render() {
         return (
             <Well>
-              <MessageBar errors={ this.state.errors } />
             </Well>
         );
     }

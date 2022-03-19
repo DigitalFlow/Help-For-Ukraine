@@ -10,11 +10,10 @@ import * as https from "https";
 import * as fs from "fs";
 import helmet from "helmet";
 
+const dbVersion = 0.1;
+
 // Load environment variables
 dotenv.config({ path: ".env.config" });
-
-// No d.ts yet
-const vhost = require("vhost");
 
 // Controllers
 import * as userController from "./controllers/UserController";
@@ -29,6 +28,7 @@ import { IsAuthenticated, EnsureAdmin } from "./domain/AuthRestrictions";
 // Connect to MySQL
 import { pool, sequelize, User } from "./domain/DbConnection";
 import rateLimit from "express-rate-limit";
+import { runMigrations } from "./domain/DbMigration";
 
 console.log("Authenticating sequelize");
 
@@ -38,6 +38,10 @@ sequelize.authenticate({ logging: true })
     return sequelize.createSchema("help_for_ukraine", { logging: true });
   })
   .then(() => {
+    console.log("Scheme synced");
+    return pool.query("set schema 'help_for_ukraine'");
+  })
+  .then(() => {
     console.log("Ensuring pgcrypto");
     return pool.query("CREATE EXTENSION IF NOT EXISTS pgcrypto;");
   })
@@ -45,10 +49,7 @@ sequelize.authenticate({ logging: true })
     console.log("Scheme created");
     return sequelize.sync({ logging: true });
   })
-  .then(() => {
-    console.log("Scheme synced");
-    return pool.query("set schema 'help_for_ukraine'");
-  })
+  .then(() => runMigrations(dbVersion))
   .then(() => {
     console.log("Connected to database");
     return pool.query("SELECT id from help_for_ukraine.user WHERE id = 'f39f13b4-b8c6-4013-ace6-087a45dbd23d'");
@@ -130,7 +131,7 @@ const secretLimiter = rateLimit({
 
 const personLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 2, // Limit each user to 2 profiles per window
+  max: 5, // Limit each user to 5 profiles per window
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers,
   keyGenerator: (req, res) => req.user,
@@ -147,6 +148,15 @@ const apiLimiter = rateLimit({
   skipFailedRequests: false
 });
 
+const signUpLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 1, // Limit each ip to one sign up per 5 minutes
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers,
+  skipSuccessfulRequests: false,
+  skipFailedRequests: true
+});
+
 app.use(apiLimiter);
 
 /**
@@ -159,7 +169,7 @@ app.get("/retrieveProfile", IsAuthenticated, userController.getProfile);
 app.get("/userList", EnsureAdmin, userController.getUserList);
 app.post("/profile/:id", EnsureAdmin, userController.postProfile);
 app.post("/profile", IsAuthenticated, userController.postProfile);
-app.post("/signup", userController.postSignup);
+app.post("/signup", signUpLimiter, userController.postSignup);
 
 app.get("/posts", postController.getPosts);
 app.get("/posts/:id", postController.getPost);
@@ -167,8 +177,8 @@ app.post("/posts/:id", EnsureAdmin, postController.upsertPost);
 app.delete("/posts/:id", EnsureAdmin, postController.deletePost);
 
 app.get("/persons", personController.getPersons);
+app.get("/persons/unapproved", EnsureAdmin, personController.getUnapprovedPersons);
 app.get("/persons/:id", personController.getPerson);
-app.get("/unpublishedPersons", EnsureAdmin, personController.getUnpublishedPersons);
 app.post("/publishPerson/:id", EnsureAdmin, personController.publishPerson);
 app.post("/persons/:id", IsAuthenticated, personLimiter, personController.upsertPerson);
 app.post("/personsecret/:id", IsAuthenticated, secretLimiter, personController.answerSecret);

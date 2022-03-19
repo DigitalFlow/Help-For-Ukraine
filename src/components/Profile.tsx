@@ -8,6 +8,7 @@ import MessageBar from "./MessageBar";
 import { ExtendedIBaseProps } from "../domain/IBaseProps";
 import { withRouter } from "react-router-dom";
 import { Well } from "./Well";
+import { ensureSuccess } from "../domain/ensureSuccess";
 
 interface ProfileState {
     userName: string;
@@ -15,8 +16,6 @@ interface ProfileState {
     repeatPassword: string;
     email: string;
     isAdmin: boolean;
-    errors: Array<string>;
-    message: string;
 }
 
 // 'HelloProps' describes the shape of props.
@@ -30,9 +29,7 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
           password: "",
           repeatPassword: "",
           email: "",
-          isAdmin: false,
-          errors: [],
-          message: ""
+          isAdmin: false
         };
 
         this.setUsername = this.setUsername.bind(this);
@@ -55,6 +52,7 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
       {
         credentials: "include"
       })
+      .then(ensureSuccess)
       .then(results => {
         return results.json();
       })
@@ -64,10 +62,11 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
               password: "",
               repeatPassword: "",
               email: user.email,
-              isAdmin: user.is_admin,
-              errors: [],
-              message: ""
-          });
+              isAdmin: user.is_admin
+          }, () => this.props.setMessageBar(undefined, undefined));
+      })
+      .catch(e => {
+        this.props.setErrors([e]);
       });
     }
 
@@ -93,7 +92,7 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
 
     update() {
       if (this.state.password !== this.state.repeatPassword) {
-        return this.setState({ errors: ["Password and repeat passwords don't match, please enter them again."] });
+        return this.props.setErrors([new Error("Password and repeat passwords don't match, please enter them again.")]);
       }
 
       const headers = new Headers();
@@ -113,33 +112,29 @@ class Profile extends React.PureComponent<ExtendedIBaseProps, ProfileState> {
         })),
         credentials: "include"
       })
+      .then(ensureSuccess)
       .then(results => {
         return results.json();
       })
       .then((data: ValidationResult) => {
         if (!data.success) {
-          this.setState({
-            errors: data.errors
-          });
+          this.props.setErrors(data.errors.map(e => new Error(e)));
         }
         else {
-          this.setState({
-            message: "Success! Profile updated.",
-            errors: []
-          });
+          this.props.setMessageBar(
+            "Success! Profile updated.",
+            undefined
+          );
         }
       })
-      .catch((e) => {
-        this.setState({
-          errors: [e.message]
-        });
+      .catch(e => {
+        this.props.setErrors([e]);
       });
     }
 
     render() {
         return (
           <Well>
-            <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <h1>Profile</h1>
             <div>
               <FieldGroup

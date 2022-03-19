@@ -8,6 +8,7 @@ import { Well } from "./Well";
 import { Column } from "react-table";
 import { ReactTable } from "./ReactTable";
 import UserInfo from "../model/UserInfo";
+import { ensureSuccess } from "../domain/ensureSuccess";
 
 export interface UserListState {
   users: Array<UserInfo>;
@@ -48,6 +49,7 @@ class UserList extends React.PureComponent<ExtendedIBaseProps, UserListState> {
     {
       credentials: "include"
     })
+    .then(ensureSuccess)
     .then(results => {
       return results.json();
     })
@@ -55,6 +57,9 @@ class UserList extends React.PureComponent<ExtendedIBaseProps, UserListState> {
         this.setState({
             users: users
         });
+    })
+    .catch(e => {
+      this.props.setErrors([e]);
     });
   }
 

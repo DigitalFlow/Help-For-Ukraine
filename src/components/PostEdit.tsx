@@ -6,11 +6,10 @@ import ReactMarkdown from "react-markdown";
 import MessageBar from "./MessageBar";
 import * as uuid from "uuid";
 import { withRouter } from "react-router-dom";
+import { ensureSuccess } from "../domain/ensureSuccess";
 
 interface PostEditState {
   post: DbPost;
-  message: string;
-  errors: Array<string>;
 }
 
 class PostEdit extends React.PureComponent<ExtendedIBaseProps, PostEditState> {
@@ -19,8 +18,6 @@ class PostEdit extends React.PureComponent<ExtendedIBaseProps, PostEditState> {
 
         this.state = {
           post: undefined,
-          message: "",
-          errors: []
         };
 
         this.retrievePost = this.retrievePost.bind(this);
@@ -47,6 +44,7 @@ class PostEdit extends React.PureComponent<ExtendedIBaseProps, PostEditState> {
       {
         credentials: "include"
       })
+      .then(ensureSuccess)
       .then(results => {
         return results.json();
       })
@@ -54,6 +52,9 @@ class PostEdit extends React.PureComponent<ExtendedIBaseProps, PostEditState> {
           this.setState({
               post: posts[0]
           });
+      })
+      .catch(e => {
+        this.props.setErrors([e]);
       });
     }
 
@@ -71,16 +72,15 @@ class PostEdit extends React.PureComponent<ExtendedIBaseProps, PostEditState> {
         method: "DELETE",
         credentials: "include"
       })
+      .then(ensureSuccess)
       .then(() => {
-          this.setState({
-              errors: [],
-              message: "Successfully deleted post"
-          });
+          this.props.setMessageBar(
+            "Successfully deleted post",
+            undefined
+          );
       })
-      .catch(err => {
-        this.setState({
-          errors: [err.message]
-        });
+      .catch(e => {
+        this.props.setErrors([e]);
       });
     }
 
@@ -96,16 +96,15 @@ class PostEdit extends React.PureComponent<ExtendedIBaseProps, PostEditState> {
         body: JSON.stringify(this.state.post),
         headers: headers
       })
+      .then(ensureSuccess)
       .then(() => {
-          this.setState({
-              errors: [],
-              message: "Successfully saved post"
-          });
+          this.props.setMessageBar(
+              "Successfully saved post",
+              undefined
+          );
       })
-      .catch(err => {
-        this.setState({
-          errors: [err.message]
-        });
+      .catch(e => {
+        this.props.setErrors([e]);
       });
     }
 
@@ -120,7 +119,6 @@ class PostEdit extends React.PureComponent<ExtendedIBaseProps, PostEditState> {
 
         return (
           <div>
-            <MessageBar message= { this.state.message } errors={ this.state.errors } />
             <ButtonToolbar>
               <ButtonGroup>
                 <Button variant="primary" onClick={ this.openHelp }>Help</Button>
