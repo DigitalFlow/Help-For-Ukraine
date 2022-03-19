@@ -6,6 +6,7 @@ export interface IBaseProps {
   triggerUserReload?: () => void;
   setMessage: (message: string) => void;
   setErrors: (errors: Array<Error>) => void;
+  getErrors: () => Array<Error>;
   setMessageBar: (message: string, errors: Array<Error>) => void;
 }
 
